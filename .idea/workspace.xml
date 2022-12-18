@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="db7ba5c7-405f-4b33-89b7-10f6ee48f7e2" name="Changes" comment="new template">
+    <list default="true" id="db7ba5c7-405f-4b33-89b7-10f6ee48f7e2" name="Changes" comment="begin auth">
       <change afterPath="$PROJECT_DIR$/src/routes/Home/Home.tsx" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/routes/Home/index.ts" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/routes/Login/Login.tsx" afterDir="false" />
@@ -36,7 +36,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/lib/pages/dashboard" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="prettierjs.PrettierConfiguration.Package" value="$PROJECT_DIR$/node_modules/prettier" />
     <property name="ts.external.directory.path" value="$PROJECT_DIR$/node_modules/typescript/lib" />
@@ -44,6 +44,7 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/lib/pages/dashboard" />
       <recent name="$PROJECT_DIR$/src" />
       <recent name="$PROJECT_DIR$/src/lib/pages/login" />
       <recent name="$PROJECT_DIR$/src/Routes/Home" />
@@ -102,7 +103,7 @@
       <option name="presentableId" value="Default" />
       <updated>1671398343056</updated>
       <workItem from="1671398344349" duration="1706000" />
-      <workItem from="1671400153722" duration="3104000" />
+      <workItem from="1671400153722" duration="5449000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <created>1671399664730</created>
@@ -136,9 +137,13 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
+    <option name="CHECK_NEW_TODO" value="false" />
     <MESSAGE value="init" />
     <MESSAGE value="dark mode for life G" />
     <MESSAGE value="new template" />
-    <option name="LAST_COMMIT_MESSAGE" value="new template" />
+    <MESSAGE value="begin login example" />
+    <MESSAGE value="begin auth" />
+    <option name="LAST_COMMIT_MESSAGE" value="begin auth" />
   </component>
 </project>
