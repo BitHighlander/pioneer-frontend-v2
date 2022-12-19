@@ -11,4 +11,11 @@ export default defineConfig({
       routes: resolve(__dirname, "src/routes"),
     },
   },
+  build: {
+    rollupOptions: {
+      external: [
+        /^node:.*/,
+      ]
+    }
+  }
 });
