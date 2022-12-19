@@ -25,6 +25,7 @@
     "@pioneer-platform/pioneer-client": "8.1.30",
     "@rollup/plugin-commonjs": "^24.0.0",
     "@rollup/plugin-typescript": "^10.0.1",
+    "@tanstack/react-table": "^8.7.4",
     "@web3-onboard/injected-wallets": "latest",
     "@web3-onboard/react": "^2.5.1",
     "@web3-onboard/walletconnect": "^2.2.2",
