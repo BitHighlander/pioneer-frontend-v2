@@ -14,8 +14,6 @@ import {
 // import { AiFillGithub } from "react-icons/ai";
 import { useConnectWallet } from "@web3-onboard/react";
 
-import home from "/lib/assets/img/home.png";
-
 const LoginSection = () => {
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
 
@@ -114,24 +112,6 @@ const LoginSection = () => {
             </Flex>
           </Flex>
         </Flex>
-        <Box
-          display={{ base: "none", md: "block" }}
-          overflowX="hidden"
-          h="100%"
-          w="40vw"
-          position="absolute"
-          right="0px"
-        >
-          <Box
-            bgImage={home}
-            w="100%"
-            h="100%"
-            bgSize="cover"
-            bgPosition="50%"
-            position="absolute"
-            borderBottomLeftRadius="20px"
-          />
-        </Box>
       </Flex>
     </Flex>
   );
