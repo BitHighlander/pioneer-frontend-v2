@@ -60,35 +60,36 @@ const LoginSection = () => {
       console.log("user: ",user.data)
 
       //login
-      // let nonce = user.data.nonce
-      // let message = `I am signing my one-time nonce: ${nonce}`
-      //
-      // console.log("wallet: ",wallet)
-      // // console.log("wallet: ",wallet.provider)
-      // // console.log("wallet: ",await wallet.provider.request('personal_sign'))
-      // // console.log("wallet: ",wallet.provider.request(message,address))
-      // // const signature = await wallet.provider.request('personal_sign',{message,address})
-      // // const signature = await wallet.sign(
-      // //     `I am signing my one-time nonce: ${nonce}`,
-      // //     address,
-      // //     '' // MetaMask will ignore the password argument here
-      // // );
-      // // console.log("signature: ",signature)
-      //
-      // console.log("message: ",message)
-      // console.log("address: ",address)
-      //
-      // // const ethersWallet = new ethers.Wallet(wallet.provider)
-      // const ethersProvider = new ethers.providers.Web3Provider(wallet.provider, 'any')
-      // const signer = ethersProvider.getSigner()
-      // let signature = await signer.signMessage(message,address)
+      let nonce = user.data.nonce
+      let message = `I am signing my one-time nonce: ${nonce}`
+
+      console.log("wallet: ",wallet)
+      // console.log("wallet: ",wallet.provider)
+      // console.log("wallet: ",await wallet.provider.request('personal_sign'))
+      // console.log("wallet: ",wallet.provider.request(message,address))
+      // const signature = await wallet.provider.request('personal_sign',{message,address})
+      // const signature = await wallet.sign(
+      //     `I am signing my one-time nonce: ${nonce}`,
+      //     address,
+      //     '' // MetaMask will ignore the password argument here
+      // );
       // console.log("signature: ",signature)
-      // console.log("address: ",address)
-      // console.log("message: ",message)
-      //
-      // //signin get api key
-      // let loginResp = await pioneer.Login({},{publicAddress:address,signature,message})
-      // console.log("loginResp: ",loginResp.data)
+
+      console.log("message: ",message)
+      console.log("address: ",address)
+
+      // const ethersWallet = new ethers.Wallet(wallet.provider)
+      if(!wallet || !wallet.provider) throw Error("Onbord not setup!")
+      const ethersProvider = new ethers.providers.Web3Provider(wallet.provider, 'any')
+      const signer = ethersProvider.getSigner()
+      let signature = await signer.signMessage(message)
+      console.log("signature: ",signature)
+      console.log("address: ",address)
+      console.log("message: ",message)
+
+      //signin get api key
+      let loginResp = await pioneer.Login({},{publicAddress:address,signature,message})
+      console.log("loginResp: ",loginResp.data)
 
       //store api key in localstoarage
 
