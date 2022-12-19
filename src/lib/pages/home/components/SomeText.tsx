@@ -1,14 +1,20 @@
-import { Grid, Heading, Text } from "@chakra-ui/react";
+import { Grid, Heading, Link, Text } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 
 const SomeText = () => {
+  const navigate = useNavigate();
+  const handleToLogin = () => navigate("/login");
+
   return (
     <Grid textAlign="center" gap={2}>
-      <Heading fontSize="2xl" fontWeight="extrabold">
-        vite-react-chakra-starter
-      </Heading>
-      <Text color="gray.500" fontSize="sm">
-        This is a vite react template with Chakra-UI and TypeScript setup.
-      </Text>
+      <Link onClick={handleToLogin}>
+        <Heading fontSize="2xl" fontWeight="extrabold">
+          Pioneers.dev
+        </Heading>
+        <Text color="gray.500" fontSize="sm">
+          Exploring new Worlds....
+        </Text>
+      </Link>
     </Grid>
   );
 };
