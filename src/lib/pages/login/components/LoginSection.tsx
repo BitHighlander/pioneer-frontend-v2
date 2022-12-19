@@ -14,7 +14,7 @@ import {
 // import { AiFillGithub } from "react-icons/ai";
 import { useConnectWallet } from "@web3-onboard/react";
 
-import home from "lib/assets/img/home.png";
+import home from "/lib/assets/img/home.png";
 
 const LoginSection = () => {
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();

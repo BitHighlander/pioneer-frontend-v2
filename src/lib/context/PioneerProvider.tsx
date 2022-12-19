@@ -21,6 +21,7 @@
         * https://github.com/BitHighlander/pioneer/blob/master/docs/pioneerTxs.png
 
 */
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { SDK } from "@pioneer-sdk/sdk";
 import { v4 as uuidv4 } from "uuid";
