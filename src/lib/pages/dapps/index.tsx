@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ethers } from 'ethers'
 // @ts-ignore
 import Client from '@pioneer-platform/pioneer-client'
-let spec = 'http://127.0.0.1:9001/spec/swagger.json'
+let spec = 'https://pioneers.dev/spec/swagger.json'
 import {
   createColumnHelper,
   flexRender,
