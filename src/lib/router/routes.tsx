@@ -1,8 +1,8 @@
 import type { PathRouteProps } from "react-router-dom";
 
+import Dashboard from "lib/pages/dashboard";
 import Home from "lib/pages/home";
 import Login from "lib/pages/login";
-import Dashboard from "lib/pages/dashboard";
 
 export const routes: Array<PathRouteProps> = [
   {

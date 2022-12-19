@@ -7,7 +7,7 @@ import SomeText from "./components/SomeText";
 const Dashboard = () => {
   return (
     <Grid gap={4}>
-        <div>Private stuffs here bro</div>
+      <div>Private stuffs here bro</div>
     </Grid>
   );
 };

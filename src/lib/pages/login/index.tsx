@@ -5,7 +5,7 @@ import LoginSection from "./components/LoginSection";
 const Login = () => {
   return (
     <Grid gap={4}>
-        <LoginSection />
+      <LoginSection />
     </Grid>
   );
 };
