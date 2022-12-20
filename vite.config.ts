@@ -3,6 +3,7 @@ import { resolve } from "path";
 import { defineConfig } from "vite";
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
 import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
+import rollupPluginPolyfillNode from 'rollup-plugin-polyfill-node'
 
 // @ts-ignore
 export default defineConfig(({}) => {
@@ -34,7 +35,7 @@ export default defineConfig(({}) => {
             buffer: true
           }),
           NodeModulesPolyfillPlugin()
-        ]
+        ],
       }
     },
     build: {
@@ -44,6 +45,7 @@ export default defineConfig(({}) => {
           ""
         ],
         plugins: [
+          rollupPluginPolyfillNode()
         ]
       }
     },
