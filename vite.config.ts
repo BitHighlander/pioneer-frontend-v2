@@ -1,12 +1,8 @@
 import react from "@vitejs/plugin-react";
 import { resolve } from "path";
-import { defineConfig, loadEnv } from "vite";
+import { defineConfig } from "vite";
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
 import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
-import rollupNodePolyFill from 'rollup-plugin-node-polyfills'
-import commonjs from '@rollup/plugin-commonjs';
-import typescript from '@rollup/plugin-typescript';
-import nodePolyfills from 'rollup-plugin-polyfill-node';
 
 // @ts-ignore
 export default defineConfig(({}) => {
@@ -21,8 +17,6 @@ export default defineConfig(({}) => {
     plugins: [react()],
     resolve: {
       alias: {
-        path: 'rollup-plugin-node-polyfills/polyfills/path',
-        process: 'rollup-plugin-node-polyfills/polyfills/process',
         lib: resolve(__dirname, "src/lib"),
         routes: resolve(__dirname, "src/routes"),
       },
@@ -50,12 +44,6 @@ export default defineConfig(({}) => {
           ""
         ],
         plugins: [
-          typescript(),
-          nodePolyfills({ include: null}),
-          commonjs(),
-          // Enable rollup polyfills plugin
-          // used during production bundling
-          rollupNodePolyFill()
         ]
       }
     },
