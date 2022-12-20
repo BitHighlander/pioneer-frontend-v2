@@ -3,16 +3,34 @@ import { useNavigate } from "react-router-dom";
 
 const SomeText = () => {
   const navigate = useNavigate();
-  const handleToLogin = () => navigate("/login");
+  const handleToDapps = () => navigate("/dapps");
 
   return (
     <Grid textAlign="center" gap={2}>
-      <Link onClick={handleToLogin}>
         <Heading fontSize="2xl" fontWeight="extrabold">
           Pioneers.dev
         </Heading>
         <Text color="gray.500" fontSize="sm">
           Exploring new Worlds....
+        </Text>
+      <Link onClick={handleToDapps}>
+        <Text color="gray.500" fontSize="sm">
+          Explore Dapps.
+        </Text>
+      </Link>
+      <Link onClick={handleToDapps}>
+        <Text color="gray.500" fontSize="sm">
+          Explore Blockchains.
+        </Text>
+      </Link>
+      <Link onClick={handleToDapps}>
+        <Text color="gray.500" fontSize="sm">
+          Explore Assets.
+        </Text>
+      </Link>
+      <Link onClick={handleToDapps}>
+        <Text color="gray.500" fontSize="sm">
+          Explore Nodes.
         </Text>
       </Link>
     </Grid>
