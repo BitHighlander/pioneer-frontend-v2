@@ -8,16 +8,15 @@ import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
 import nodePolyfills from 'rollup-plugin-polyfill-node';
 
-export default defineConfig(({ command, mode }) => {
+// @ts-ignore
+export default defineConfig(({}) => {
   // Load env file based on `mode` in the current working directory.
   // Set the third parameter to '' to load all env regardless of the `VITE_` prefix.
-  const env = loadEnv(mode, process.cwd(), '')
+  // const env = loadEnv(mode, process.cwd(), '')
   return {
     // vite config
     define: {
       'process.env': {},
-      'process.cwd': {},
-      __APP_ENV__: env.APP_ENV,
     },
     plugins: [react()],
     resolve: {
