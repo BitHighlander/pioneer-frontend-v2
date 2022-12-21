@@ -9,7 +9,7 @@ import { ethers } from 'ethers'
 // @ts-ignore
 import Client from '@pioneer-platform/pioneer-client'
 let spec = 'https://pioneers.dev/spec/swagger.json'
-// let spec = 'http://127.0.0.1:9001/spec/swagger.json'
+//let spec = 'http://127.0.0.1:9001/spec/swagger.json'
 
 import {
   createColumnHelper,
@@ -24,36 +24,47 @@ const columnHelper = createColumnHelper<any>()
 
 
 
-const WhitelistBlockchains = () => {
+const ReviewBlockchains = () => {
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
   // const alert = useAlert()
   const [data, setData] = React.useState(() => [{
-    "name": "etherscan",
-    "app": "https://etherscan.io/",
+    "_id": {
+      "$oid": "63a0d3201057635a9f8dc60f"
+    },
+    "name": "Ethereum Mainnet",
+    "type": "EVM",
+    "image": "https://pioneers.dev/coins/ethereum-mainnet.png",
     "tags": [
+      "KeepKeySupport",
+      "DappSupport",
+      "WalletConnectSupport",
+      "EVM",
       "ethereum",
-      "ethereum",
-      "d2ae9c3c2782806fd6db704bf40ef0238af9470d7964ae566114a033f4a9a110"
+      "Ether",
+      "ETH",
+      1,
+      null
     ],
-    "image": "https://explorer-api.walletconnect.com/v3/logo/md/de60f6e0-effe-4b8c-1f3e-e12278839300?projectId=2f05ae7f1116030fde2d36508f472bfb",
-    "developer": "0x3f2329c9adfbccd9a84f52c906e936a42da18cb8",
+    "blockchain": "ethereum",
+    "symbol": "ETH",
+    "service": null,
+    "chainId": 1,
+    "network": [
+      "https://mainnet.infura.io/v3/${INFURA_API_KEY}",
+      "wss://mainnet.infura.io/ws/v3/${INFURA_API_KEY}",
+      "https://api.mycryptoapi.com/eth",
+      "https://cloudflare-eth.com"
+    ],
     "facts": [
       {
         "signer": "0x3f2329c9adfbccd9a84f52c906e936a42da18cb8",
-        "payload": "{\"name\":\"Etherscan\",\"url\":\"https://etherscan.io/\"}",
-        "signature": "0x64c2da509ce6cada0432e5dcdc961adf44012f5a4fba84277bc77f60b97d5d2476ecc0c4268d42dc8e40e952e5a653ae9c9bd0d820d19e25ad388bcd6373361e1b"
+        "payload": "{\"blockchain\":\"Ethereum Mainnet\",\"symbol\":\"ETH\",\"chainId\":1}",
+        "signature": "0x29581d5c7e2add0c1d1eea4040f827002aac9f1fc12afe53dc0ce87585c4b5737ff73df0b6788f92085bfc2a3e81e6462a5f59205a4c9e24ccab5eb1a15a27eb1b"
       }
     ],
-    "description": "app name is Etherscan",
-    "homepage": "https://etherscan.io/",
-    "id": "8fQirfJGia8T4frRCp7aKd",
-    "isSpotlight": false,
-    "whitelist": false,
-    "created": 1671477059170,
-    "trust": 0,
-    "transparency": 0,
-    "innovation": 0,
-    "popularity": 0
+    "explorer": "https://ethereum.org",
+    "description": "more info here: https://ethereum.org This is a EVM network with chainId: 1 Follows EIP:155",
+    "faucets": []
   }])
 
   const columns = [
@@ -73,22 +84,22 @@ const WhitelistBlockchains = () => {
       cell: info => info.getValue(),
       footer: info => info.column.id,
     }),
-    columnHelper.accessor('description', {
-      cell: info => <a href={info.getValue()}>{info.getValue()}</a> ,
-      footer: info => info.column.id,
-    }),
-    columnHelper.accessor('name', {
-      id: 'edit',
-      cell: info => <Button onClick={() => editEntry(info.getValue())}>Edit</Button>,
-      header: () => <span>edit</span>,
-      footer: info => info.column.id,
-    }),
-    columnHelper.accessor('name', {
-      id: 'approve',
-      cell: info => <Button onClick={() => whitelistEntry(info.getValue())}>approve</Button>,
-      header: () => <span>approve</span>,
-      footer: info => info.column.id,
-    }),
+    // columnHelper.accessor('app', {
+    //   cell: info => <a href={info.getValue()}>{info.getValue()}</a> ,
+    //   footer: info => info.column.id,
+    // }),
+    // columnHelper.accessor('name', {
+    //   id: 'edit',
+    //   cell: info => <Button onClick={() => editEntry(info.getValue())}>Edit</Button>,
+    //   header: () => <span>edit</span>,
+    //   footer: info => info.column.id,
+    // }),
+    // columnHelper.accessor('name', {
+    //   id: 'approve',
+    //   cell: info => <Button onClick={() => whitelistEntry(info.getValue())}>approve</Button>,
+    //   header: () => <span>approve</span>,
+    //   footer: info => info.column.id,
+    // }),
   ]
 
   let editEntry = async function(name:string){
@@ -152,7 +163,7 @@ const WhitelistBlockchains = () => {
       // if(!address) throw Error("address required!")
       //
       // console.log("whitelist: ",whitelist)
-      // let resultWhitelist = await pioneer.WhitelistApp("",whitelist)
+      // let resultWhitelist = await pioneer.ChartBlockchain("",whitelist)
       // console.log("resultWhitelist: ",resultWhitelist.data)
       // alert.show(resultWhitelist.data)
     }catch(e){
@@ -190,12 +201,12 @@ const WhitelistBlockchains = () => {
       let pioneer = await client.init()
 
       //get all unapproved dapps
-      let blockchains = await pioneer.SearchBlockchainsPageniate({limit:1000,skip:0})
-      console.log("blockchains: ",blockchains.data.length)
-      console.log("blockchains: ",blockchains.data[0])
+      let apps = await pioneer.SearchBlockchainsPageniate({limit:1000,skip:0})
+      console.log("apps: ",apps.data.length)
+      console.log("apps: ",apps.data[0])
 
       //setData
-      setData(blockchains.data)
+      setData(apps.data)
 
     }catch(e){
       console.error(e)
@@ -251,4 +262,4 @@ const WhitelistBlockchains = () => {
   );
 };
 
-export default WhitelistBlockchains;
+export default ReviewBlockchains;

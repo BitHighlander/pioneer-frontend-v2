@@ -5,7 +5,7 @@ const APP_NAME = "vite-react-chakra-starter";
 const Meta = () => {
   return (
     <Helmet>
-      <title>Vite React Chakra Starter</title>
+      <title>Pioneers.dev</title>
       <meta name="description" content="Vite React Chakra Starter Template" />
 
       <meta name="application-name" content={APP_NAME} />
@@ -16,7 +16,7 @@ const Meta = () => {
       <meta name="mobile-web-app-capable" content="yes" />
       <meta name="theme-color" content="#FFFFFF" />
 
-      <link rel="shortcut icon" href="/assets/favicon.svg" />
+      <link rel="shortcut icon" href="/assets/compass.png" />
       <link rel="manifest" href="/manifest.json" />
     </Helmet>
   );

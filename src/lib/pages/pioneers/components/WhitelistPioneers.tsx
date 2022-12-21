@@ -24,7 +24,7 @@ const columnHelper = createColumnHelper<any>()
 
 
 
-const WhitelistBlockchains = () => {
+const WhitelistAssets = () => {
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
   // const alert = useAlert()
   const [data, setData] = React.useState(() => [{
@@ -251,4 +251,4 @@ const WhitelistBlockchains = () => {
   );
 };
 
-export default WhitelistBlockchains;
+export default WhitelistAssets;
