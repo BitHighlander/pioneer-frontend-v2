@@ -2,6 +2,7 @@ import type { PathRouteProps } from "react-router-dom";
 
 import Dashboard from "lib/pages/dashboard";
 import Dapps from "lib/pages/dapps";
+import Blockchains from "lib/pages/blockchains";
 import Home from "lib/pages/home";
 import Login from "lib/pages/login";
 
@@ -27,7 +28,7 @@ export const privateRoutes: Array<PathRouteProps> = [
   },
   {
     path: "/blockchains",
-    element: <Dapps />,
+    element: <Blockchains />,
   },
   {
     path: "/assets",
