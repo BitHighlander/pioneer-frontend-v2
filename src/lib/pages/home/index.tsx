@@ -7,9 +7,9 @@ import SomeText from "./components/SomeText";
 const Home = () => {
   return (
     <Grid gap={4}>
+      <CTASection />
       <SomeText />
       <SomeImage />
-      <CTASection />
     </Grid>
   );
 };
