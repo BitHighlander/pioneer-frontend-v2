@@ -14,9 +14,13 @@ import { v4 as uuidv4 } from "uuid";
 import { ChevronDownIcon } from '@chakra-ui/icons'
 // @ts-ignore
 import Client from '@pioneer-platform/pioneer-client'
-let spec = 'https://pioneers.dev/spec/swagger.json'
+import { ethers } from "ethers";
+import { useConnectWallet } from "@web3-onboard/react";
+// let spec = 'https://pioneers.dev/spec/swagger.json'
+let spec = 'http://127.0.0.1:9001/spec/swagger.json'
 
 const Header = () => {
+  const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
   const navigate = useNavigate();
   const handleToHome = () => navigate("/");
   const handleToDapps = () => navigate("/dapps");
@@ -29,6 +33,7 @@ const Header = () => {
   const [blockchains, setBlockchains] = useState(0)
   const [nodes, setNodes] = useState(0)
   const [dapps, setDapps] = useState(0)
+  const [fox, setFox] = useState(0)
 
   let onStart = async function(){
     try{
@@ -66,7 +71,31 @@ const Header = () => {
       setNodes(globals.data.info.nodes)
       setDapps(globals.data.info.dapps)
 
-
+      let minABI = [
+        // balanceOf
+        {
+          "constant":true,
+          "inputs":[{"name":"_owner","type":"address"}],
+          "name":"balanceOf",
+          "outputs":[{"name":"balance","type":"uint256"}],
+          "type":"function"
+        },
+        // decimals
+        {
+          "constant":true,
+          "inputs":[],
+          "name":"decimals",
+          "outputs":[{"name":"","type":"uint8"}],
+          "type":"function"
+        }
+      ];
+      let address = wallet?.accounts[0]?.address
+      const ethersProvider = new ethers.providers.Web3Provider(wallet.provider, 'any')
+      const newContract = new ethers.Contract("0xc770eefad204b5180df6a14ee197d99d808ee52d",minABI,ethersProvider);
+      const decimals = await newContract.decimals();
+      const balanceBN = await newContract.balanceOf(address)
+      let foxBalance = parseInt(balanceBN/Math.pow(10, decimals))
+      setFox(foxBalance)
     }catch(e){
       console.error(e)
     }
@@ -75,7 +104,7 @@ const Header = () => {
   //onstart get data
   useEffect(() => {
     onStart()
-  }, [])
+  }, [wallet,wallet?.provider])
 
   return (
     <Flex
@@ -105,7 +134,8 @@ const Header = () => {
             <MenuItem onClick={handleToPioneers}><Badge><small>{pioneers}</small></Badge> Pioneers</MenuItem>
           </MenuList>
         </Menu>
-        <ThemeToggle />
+        <Badge>fox: {fox}</Badge>
+        {/*<ThemeToggle />*/}
       </Box>
     </Flex>
   );

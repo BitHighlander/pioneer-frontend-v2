@@ -108,7 +108,8 @@ const LoginSection = () => {
 
   const onConnect = async function () {
     try {
-      await connect();
+      if(!wallet)
+        await connect();
       return true;
     } catch (e) {
       console.error(e);

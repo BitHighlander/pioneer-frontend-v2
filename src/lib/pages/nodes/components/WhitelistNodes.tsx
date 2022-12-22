@@ -8,8 +8,8 @@ import { ethers } from 'ethers'
 
 // @ts-ignore
 import Client from '@pioneer-platform/pioneer-client'
-let spec = 'https://pioneers.dev/spec/swagger.json'
-// let spec = 'http://127.0.0.1:9001/spec/swagger.json'
+// let spec = 'https://pioneers.dev/spec/swagger.json'
+let spec = 'http://127.0.0.1:9001/spec/swagger.json'
 
 import {
   createColumnHelper,
@@ -73,20 +73,12 @@ const WhitelistAssets = () => {
       cell: info => info.getValue(),
       footer: info => info.column.id,
     }),
-    columnHelper.accessor('description', {
-      cell: info => <a href={info.getValue()}>{info.getValue()}</a> ,
+    columnHelper.accessor('service', {
+      cell: info => info.getValue(),
       footer: info => info.column.id,
     }),
-    columnHelper.accessor('name', {
-      id: 'edit',
-      cell: info => <Button onClick={() => editEntry(info.getValue())}>Edit</Button>,
-      header: () => <span>edit</span>,
-      footer: info => info.column.id,
-    }),
-    columnHelper.accessor('name', {
-      id: 'approve',
-      cell: info => <Button onClick={() => whitelistEntry(info.getValue())}>approve</Button>,
-      header: () => <span>approve</span>,
+    columnHelper.accessor('type', {
+      cell: info => info.getValue(),
       footer: info => info.column.id,
     }),
   ]
@@ -162,7 +154,8 @@ const WhitelistAssets = () => {
 
   let onStart = async function(){
     try{
-      await connect();
+      if(!wallet)
+        await connect();
       let queryKey = localStorage.getItem('queryKey')
       let username= localStorage.getItem('username')
       if (!queryKey) {
@@ -190,7 +183,7 @@ const WhitelistAssets = () => {
       let pioneer = await client.init()
 
       //get all unapproved dapps
-      let blockchains = await pioneer.SearchBlockchainsPageniate({limit:1000,skip:0})
+      let blockchains = await pioneer.SearchNodes({limit:1000,skip:0})
       console.log("blockchains: ",blockchains.data.length)
       console.log("blockchains: ",blockchains.data[0])
 

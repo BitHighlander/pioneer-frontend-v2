@@ -162,7 +162,8 @@ const WhitelistAssets = () => {
 
   let onStart = async function(){
     try{
-      await connect();
+      if(!wallet)
+        await connect();
       let queryKey = localStorage.getItem('queryKey')
       let username= localStorage.getItem('username')
       if (!queryKey) {
@@ -190,7 +191,7 @@ const WhitelistAssets = () => {
       let pioneer = await client.init()
 
       //get all unapproved dapps
-      let blockchains = await pioneer.SearchBlockchainsPageniate({limit:1000,skip:0})
+      let blockchains = await pioneer.SearchAssetsList({limit:1000,skip:0})
       console.log("blockchains: ",blockchains.data.length)
       console.log("blockchains: ",blockchains.data[0])
 

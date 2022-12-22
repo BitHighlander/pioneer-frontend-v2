@@ -15,21 +15,21 @@ const Pioneers = () => {
       <h3>Welcome Pioneers! View the top Pioneers in the space!</h3>
       <Tabs>
         <TabList>
-          <Tab>Pioneers Pending Review</Tab>
-          <Tab>Pioneer Ranking</Tab>
-          <Tab>Register as new Pioneer</Tab>
+          {/*<Tab>Pioneers Pending Review</Tab>*/}
+          <Tab>Pioneer Rankings</Tab>
+          {/*<Tab>Register as new Pioneer</Tab>*/}
         </TabList>
 
         <TabPanels>
-          <TabPanel>
-            <WhitelistPioneers />
-          </TabPanel>
+          {/*<TabPanel>*/}
+          {/*  <WhitelistPioneers />*/}
+          {/*</TabPanel>*/}
           <TabPanel>
             <ReviewPioneers />
           </TabPanel>
-          <TabPanel>
-            <SubmitPioneers />
-          </TabPanel>
+          {/*<TabPanel>*/}
+          {/*  <SubmitPioneers />*/}
+          {/*</TabPanel>*/}
         </TabPanels>
       </Tabs>
     </div>

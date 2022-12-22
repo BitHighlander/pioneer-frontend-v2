@@ -84,6 +84,14 @@ const ReviewBlockchains = () => {
       cell: info => info.getValue(),
       footer: info => info.column.id,
     }),
+    columnHelper.accessor('service', {
+      cell: info => info.getValue(),
+      footer: info => info.column.id,
+    }),
+    columnHelper.accessor('tags', {
+      cell: info => info.getValue(),
+      footer: info => info.column.id,
+    }),
     // columnHelper.accessor('app', {
     //   cell: info => <a href={info.getValue()}>{info.getValue()}</a> ,
     //   footer: info => info.column.id,
@@ -173,7 +181,8 @@ const ReviewBlockchains = () => {
 
   let onStart = async function(){
     try{
-      await connect();
+      if(!wallet)
+        await connect();
       let queryKey = localStorage.getItem('queryKey')
       let username= localStorage.getItem('username')
       if (!queryKey) {
@@ -201,7 +210,7 @@ const ReviewBlockchains = () => {
       let pioneer = await client.init()
 
       //get all unapproved dapps
-      let apps = await pioneer.SearchBlockchainsPageniate({limit:1000,skip:0})
+      let apps = await pioneer.SearchNodes({limit:1000,skip:0})
       console.log("apps: ",apps.data.length)
       console.log("apps: ",apps.data[0])
 

@@ -68,26 +68,26 @@ const ReviewBlockchains = () => {
   }])
 
   const columns = [
-    columnHelper.accessor('image', {
-      cell: info => <Image
-        src={info.getValue()}
-        alt='keepkey api'
-        objectFit="cover"
-        height="60px"
-        width="60px"
-        objectPosition="center"
-      >
-      </Image>,
-      footer: info => info.column.id,
-    }),
-    columnHelper.accessor('blockchain', {
-      cell: info => info.getValue(),
-      footer: info => info.column.id,
-    }),
-    // columnHelper.accessor('app', {
-    //   cell: info => <a href={info.getValue()}>{info.getValue()}</a> ,
+    // columnHelper.accessor('image', {
+    //   cell: info => <Image
+    //     src={info.getValue()}
+    //     alt='keepkey api'
+    //     objectFit="cover"
+    //     height="60px"
+    //     width="60px"
+    //     objectPosition="center"
+    //   >
+    //   </Image>,
     //   footer: info => info.column.id,
     // }),
+    columnHelper.accessor('fox', {
+      cell: info => info.getValue()+"   ",
+      footer: info => info.column.id,
+    }),
+    columnHelper.accessor('publicAddress', {
+      cell: info => <a href={info.getValue()}>{info.getValue()}</a> ,
+      footer: info => info.column.id,
+    }),
     // columnHelper.accessor('name', {
     //   id: 'edit',
     //   cell: info => <Button onClick={() => editEntry(info.getValue())}>Edit</Button>,
@@ -173,7 +173,8 @@ const ReviewBlockchains = () => {
 
   let onStart = async function(){
     try{
-      await connect();
+      if(!wallet)
+        await connect();
       let queryKey = localStorage.getItem('queryKey')
       let username= localStorage.getItem('username')
       if (!queryKey) {
@@ -201,12 +202,45 @@ const ReviewBlockchains = () => {
       let pioneer = await client.init()
 
       //get all unapproved dapps
-      let apps = await pioneer.SearchBlockchainsPageniate({limit:1000,skip:0})
-      console.log("apps: ",apps.data.length)
-      console.log("apps: ",apps.data[0])
+      let devs = await pioneer.ListDevelopers({limit:1000,skip:0})
+      console.log("devs: ",devs.data.length)
+      console.log("devs: ",devs.data[0])
 
-      //setData
-      setData(apps.data)
+      //get fox balances
+      if(!wallet || !wallet.provider) throw Error("Onbord not setup!")
+      const ethersProvider = new ethers.providers.Web3Provider(wallet.provider, 'any')
+
+      for(let i = 0; i < devs.data.length; i++){
+        let dev = devs.data[i]
+        console.log(dev)
+        console.log(dev.publicAddress)
+
+        let minABI = [
+          // balanceOf
+          {
+            "constant":true,
+            "inputs":[{"name":"_owner","type":"address"}],
+            "name":"balanceOf",
+            "outputs":[{"name":"balance","type":"uint256"}],
+            "type":"function"
+          },
+          // decimals
+          {
+            "constant":true,
+            "inputs":[],
+            "name":"decimals",
+            "outputs":[{"name":"","type":"uint8"}],
+            "type":"function"
+          }
+        ];
+        const newContract = new ethers.Contract("0xc770eefad204b5180df6a14ee197d99d808ee52d",minABI,ethersProvider);
+        const decimals = await newContract.decimals();
+        const balanceBN = await newContract.balanceOf(dev.publicAddress)
+        devs.data[i].fox = parseInt(balanceBN/Math.pow(10, decimals))
+      }
+      setData(devs.data)
+
+
 
     }catch(e){
       console.error(e)
@@ -216,7 +250,7 @@ const ReviewBlockchains = () => {
   //onstart get data
   useEffect(() => {
     onStart()
-  }, [])
+  }, [wallet,wallet?.provider])
 
   const table = useReactTable({
     data,
