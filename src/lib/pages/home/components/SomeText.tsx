@@ -42,6 +42,11 @@ const SomeText = () => {
           Explore other Pioneers.
         </Text>
       </Link>
+      <Link href="https://pioneers.dev/docs" isExternal>
+        <Text color="gray.500" fontSize="sm">
+          Developer? use our api! https://pioneers.dev/docs
+        </Text>
+      </Link>
     </Grid>
   );
 };
