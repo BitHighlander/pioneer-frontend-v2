@@ -5,7 +5,6 @@ import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 
 import WhitelistBlockchains from "./components/WhitelistBlockchains";
 import SubmitBlockchains from "./components/SubmitBlockchains";
-import ReviewBlockchainss from "./components/ReviewBlockchains";
 
 const Blockchains = () => {
 
@@ -15,7 +14,6 @@ const Blockchains = () => {
       <h3>Welcome Pioneers! Help new users discover and chart new Blockchains</h3>
       <Tabs>
         <TabList>
-          <Tab>Blockchains Pending Review</Tab>
           <Tab>Blockchains Live on Pioneer</Tab>
           <Tab>Chart a newly discoverd Blockchain</Tab>
         </TabList>
@@ -23,9 +21,6 @@ const Blockchains = () => {
         <TabPanels>
           <TabPanel>
             <WhitelistBlockchains />
-          </TabPanel>
-          <TabPanel>
-            <ReviewBlockchainss />
           </TabPanel>
           <TabPanel>
             <SubmitBlockchains />

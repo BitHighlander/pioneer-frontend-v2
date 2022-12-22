@@ -15,15 +15,11 @@ const Assets = () => {
       <h3>Welcome Pioneers! Help new users discover and chart new Assets</h3>
       <Tabs>
         <TabList>
-          <Tab>Assets Pending Review</Tab>
           <Tab>Assets Live on Pioneer</Tab>
           <Tab>Chart a newly discoverd Assets</Tab>
         </TabList>
 
         <TabPanels>
-          <TabPanel>
-            <WhitelistAssets />
-          </TabPanel>
           <TabPanel>
             <ReviewAssets />
           </TabPanel>

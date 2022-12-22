@@ -127,8 +127,8 @@ const Header = () => {
             />
           </MenuButton>
           <MenuList>
-            <MenuItem onClick={handleToAssets}><Badge><small>{assets}</small></Badge> Assets</MenuItem>
             <MenuItem onClick={handleToDapps}><Badge><small>{dapps}</small></Badge> Dapps</MenuItem>
+            <MenuItem onClick={handleToAssets}><Badge><small>{assets}</small></Badge> Assets</MenuItem>
             <MenuItem onClick={handleToBlockchains}><Badge><small>{blockchains}</small></Badge> Blockchains</MenuItem>
             <MenuItem onClick={handleToNodes}><Badge><small>{nodes}</small></Badge> Nodes</MenuItem>
             <MenuItem onClick={handleToPioneers}><Badge><small>{pioneers}</small></Badge> Pioneers</MenuItem>
