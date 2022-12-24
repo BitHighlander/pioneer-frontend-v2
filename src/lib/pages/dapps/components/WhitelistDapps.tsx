@@ -1,4 +1,10 @@
-import { Grid, Image, Button } from "@chakra-ui/react";
+import { Grid, Image, Button,  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton, Textarea, useDisclosure } from "@chakra-ui/react";
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { useConnectWallet } from "@web3-onboard/react";
@@ -25,7 +31,9 @@ const columnHelper = createColumnHelper<any>()
 
 
 const WhitelistDapps = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure()
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
+  let [value, setValue] = React.useState('')
   // const alert = useAlert()
   const [data, setData] = React.useState(() => [{
     "name": "etherscan",
@@ -95,6 +103,10 @@ const WhitelistDapps = () => {
     try{
       //open modal
       console.log("edit name: ",name)
+      onOpen()
+      let entry = data.filter(function (e) { return e.name === name; })[0];
+      console.log("entry: ",entry)
+      setValue(JSON.stringify(entry))
     }catch(e){
       console.error(e)
     }
@@ -213,9 +225,34 @@ const WhitelistDapps = () => {
     columns,
     getCoreRowModel: getCoreRowModel(),
   })
-
+  let handleInputChange = (e: { target: { value: any; }; }) => {
+    let inputValue = e.target.value
+    setValue(inputValue)
+  }
   return (
     <div>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Modal Title</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Textarea
+                value={value}
+                onChange={handleInputChange}
+                placeholder='Here is a sample placeholder'
+                size='sm'
+            />
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme='blue' mr={3} onClick={onClose}>
+              Close
+            </Button>
+            <Button variant='ghost'>Secondary Action</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       <div className="p-2">
         <table>
           <thead>
