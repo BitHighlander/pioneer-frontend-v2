@@ -8,8 +8,8 @@ import { ethers } from 'ethers'
 
 // @ts-ignore
 import Client from '@pioneer-platform/pioneer-client'
-let spec = 'https://pioneers.dev/spec/swagger.json'
-//let spec = 'http://127.0.0.1:9001/spec/swagger.json'
+//let spec = 'https://pioneers.dev/spec/swagger.json'
+let spec = 'http://127.0.0.1:9001/spec/swagger.json'
 
 import {
   createColumnHelper,
