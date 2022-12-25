@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ethers } from 'ethers'
 // import { useAlert } from 'react-alert'
 import { ArrowUpIcon, ArrowDownIcon } from '@chakra-ui/icons'
+import { useToast } from '@chakra-ui/react'
 // @ts-ignore
 import Client from '@pioneer-platform/pioneer-client'
 let spec = 'https://pioneers.dev/spec/swagger.json'
@@ -57,6 +58,7 @@ const ReviewDapps = () => {
     "innovation": 0,
     "popularity": 0
   }])
+  const toast = useToast()
 
   let isUpActive = function(name:string){
     console.log("isUpActive: ",name)
@@ -90,6 +92,10 @@ const ReviewDapps = () => {
     }),
     columnHelper.accessor('app', {
       cell: info => <a href={info.getValue()}>{info.getValue()}</a> ,
+      footer: info => info.column.id,
+    }),
+    columnHelper.accessor('score', {
+      cell: info => info.getValue(),
       footer: info => info.column.id,
     }),
     columnHelper.accessor('name', {
@@ -214,7 +220,7 @@ const ReviewDapps = () => {
 
       //update entry
       let entry = {
-        "name":"etherscan",
+        "name":name,
         "vote":"up"
       }
       //toString
@@ -235,6 +241,14 @@ const ReviewDapps = () => {
       let resultWhitelist = await pioneer.VoteOnApp("",update)
       console.log("resultWhitelist: ",resultWhitelist)
 
+      toast({
+        title: 'User Voted!.',
+        description: "You UP voted for "+name+ " result: "+resultWhitelist.data?.message,
+        status: 'success',
+        duration: 9000,
+        isClosable: true,
+      })
+      setTimeout(onStart,2000)
     }catch(e){
       console.error(e)
     }
@@ -271,7 +285,7 @@ const ReviewDapps = () => {
       let pioneer = await client.init()
       //update entry
       let entry = {
-        "name":"etherscan",
+        "name":name,
         "vote":"down"
       }
       //toString
@@ -291,6 +305,17 @@ const ReviewDapps = () => {
       console.log("update: ",update)
       let resultWhitelist = await pioneer.VoteOnApp("",update)
       console.log("resultWhitelist: ",resultWhitelist)
+
+      toast({
+        title: 'User Voted!.',
+        description: "You DOWN voted for "+name+ " result: "+resultWhitelist.data?.message,
+        status: 'success',
+        duration: 9000,
+        isClosable: true,
+      })
+
+      setTimeout(onStart,2000)
+
     }catch(e){
       console.error(e)
     }
