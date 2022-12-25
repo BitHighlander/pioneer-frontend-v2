@@ -16,7 +16,7 @@ const Dapps = () => {
       <Tabs>
         <TabList>
           <Tab>Apps Pending Review</Tab>
-          <Tab>Apps Live in store</Tab>
+          <Tab>Apps live for voting</Tab>
           <Tab>Chart a newly discovered Dapp</Tab>
         </TabList>
 
