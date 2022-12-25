@@ -53,15 +53,15 @@ export default init({
   ],
   appMetadata: {
     // The name of your dApp
-    name: "Pioneers",
+    name: "Pioneers.dev",
     // SVG icon string, with height or width (whichever is larger) set to 100% or a valid image URL
-    icon: "<svg></svg>",
+    icon: "https://cdn3.vectorstock.com/i/1000x1000/01/82/green-compass-vector-19780182.jpg",
     // Optional wide format logo (ie icon and text) to be displayed in the sidebar of connect modal. Defaults to icon if not provided
-    logo: "<svg></svg>",
+    logo: "https://cdn3.vectorstock.com/i/1000x1000/01/82/green-compass-vector-19780182.jpg",
     // The description of your app
     description: "Pioneer Developer Program",
     // The url to a getting started guide for app
-    gettingStartedGuide: "http://mydapp.io/getting-started",
+    gettingStartedGuide: "https://pioneers.dev",
     // url that points to more information about app
     explore: "https://pioneers.dev",
     // if your app only supports injected wallets and when no injected wallets detected, recommend the user to install some

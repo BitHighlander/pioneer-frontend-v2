@@ -1,4 +1,14 @@
-import { Grid, Image, Button } from "@chakra-ui/react";
+import {
+  Grid,
+  Image,
+  Button,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody, Textarea, ModalFooter, useDisclosure
+} from "@chakra-ui/react";
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { useConnectWallet } from "@web3-onboard/react";
@@ -27,6 +37,7 @@ const columnHelper = createColumnHelper<any>()
 
 const ReviewDapps = () => {
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
+  const { isOpen, onOpen, onClose } = useDisclosure()
   // const alert = useAlert()
   const [votedUpNames, setVotedUpNames] = React.useState(() => [])
   const [votedDownNames, setVotedDownNames] = React.useState(() => [])
@@ -58,6 +69,7 @@ const ReviewDapps = () => {
     "innovation": 0,
     "popularity": 0
   }])
+  let [value, setValue] = React.useState('')
   const toast = useToast()
 
   let isUpActive = function(name:string){
@@ -126,15 +138,6 @@ const ReviewDapps = () => {
     // }),
   ]
 
-  let editEntry = async function(name:string){
-    try{
-      //open modal
-      console.log("edit name: ",name)
-    }catch(e){
-      console.error(e)
-    }
-  }
-
   let onStart = async function(){
     try{
       if(!wallet)
@@ -169,6 +172,15 @@ const ReviewDapps = () => {
       let apps = await pioneer.SearchDappsPageniate({limit:1000,skip:0})
       console.log("apps: ",apps.data.length)
       console.log("apps: ",apps.data[0])
+      const sortArrayByScore = (arr: any[]) => {
+        return arr.sort((a, b) => {
+          if (a.score === undefined) a.score = 0;
+          if (b.score === undefined) b.score = 0;
+          return b.score - a.score;
+        });
+      }
+      apps.data = sortArrayByScore(apps.data)
+      console.log("apps: ",apps.data)
 
       //setData
       setData(apps.data)
@@ -330,14 +342,139 @@ const ReviewDapps = () => {
     }
   }
 
+  let editEntry = async function(name:string){
+    try{
+      //open modal
+      console.log("edit name: ",name)
+      onOpen()
+      let entry = data.filter(function (e) { return e.name === name; })[0];
+      console.log("entry: ",entry)
+      const prettyJson = JSON.stringify(entry, null, 2);
+      setValue(prettyJson)
+    }catch(e){
+      console.error(e)
+    }
+  }
+
+  let onSubmitEdit = async function(){
+    try{
+      let queryKey = localStorage.getItem('queryKey')
+      let username= localStorage.getItem('username')
+      if (!queryKey) {
+        console.log("Creating new queryKey~!")
+        queryKey = 'key:' + uuidv4()
+        localStorage.setItem('queryKey', queryKey)
+      }
+      if (!username) {
+        console.log("Creating new username~!")
+        username = 'user:' + uuidv4()
+        username = username.substring(0, 13);
+        console.log("Creating new username~! username: ", username)
+        localStorage.setItem('username', username)
+      }
+
+      let config = {
+        queryKey,
+        username,
+        spec
+      }
+      console.log("config: ",config)
+
+      //get config
+      let client = new Client(spec,config)
+      let pioneer = await client.init()
+
+      try{
+        const diffJson = (obj1: { [x: string]: any; }, obj2: { [x: string]: any; }) => {
+          let diffArray = [];
+          for (let key in obj1) {
+            if (obj2[key] !== undefined && typeof obj2[key] !== 'object') {
+              if (obj1[key] !== obj2[key]) {
+                diffArray.push({
+                  key: key,
+                  value: obj2[key]
+                });
+              }
+            }
+          }
+          return diffArray;
+        }
+        value = JSON.parse(value)
+        //entry DB
+        let entry = data.filter(function (e) { // @ts-ignore
+          return e.name === value.name; })[0];
+        console.log("entry: ",entry)
+        // @ts-ignore
+        let diffs = diffJson(entry,value)
+
+        for(let i = 0; i < diffs.length; i++){
+          let diff:any = diffs[i]
+          // @ts-ignore
+          diff.name = value.name
+          let payload = JSON.stringify(diff)
+
+          if(!wallet || !wallet.provider) throw Error("Onbord not setup!")
+          const ethersProvider = new ethers.providers.Web3Provider(wallet.provider, 'any')
+          const signer = ethersProvider.getSigner()
+          let signature = await signer.signMessage(payload)
+          let address = wallet?.accounts[0]?.address
+          let update:any = {}
+          update.signer = address
+          update.payload = payload
+          update.signature = signature
+          if(!address) throw Error("address required!")
+          //submit as admin
+          console.log("update: ",update)
+          let resultWhitelist = await pioneer.UpdateApp("",update)
+          console.log("resultWhitelist: ",resultWhitelist)
+        }
+
+      }catch(e){
+        //alert invalid JSON!
+        console.error("e: ",e)
+      }
+    }catch(e){
+      console.error(e)
+    }
+  }
+
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
   })
 
+  let handleInputChange = (e: { target: { value: any; }; }) => {
+    let inputValue = e.target.value
+    setValue(inputValue)
+  }
+
   return (
     <div>
+      <Modal isOpen={isOpen} onClose={onClose}
+             size='100px' >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Edit Entry</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Textarea
+                height='600px'
+                value={value}
+                onChange={handleInputChange}
+                placeholder='Here is a sample placeholder'
+                size='sm'
+            />
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme='blue' mr={3} onClick={onClose}>
+              Close
+            </Button>
+            <Button onClick={onSubmitEdit} variant='green'>Submit changes</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       <div className="p-2">
         <table>
           <thead>
@@ -369,7 +506,7 @@ const ReviewDapps = () => {
           </tbody>
         </table>
         <div className="h-4" />
-        <Button onClick={submitVotes}>Sign and Submit Votes</Button>
+        {/*<Button onClick={submitVotes}>Sign and Submit Votes</Button>*/}
       </div>
     </div>
   );
