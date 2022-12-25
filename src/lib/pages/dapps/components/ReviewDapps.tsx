@@ -5,11 +5,11 @@ import { useConnectWallet } from "@web3-onboard/react";
 import { v4 as uuidv4 } from 'uuid';
 import { ethers } from 'ethers'
 // import { useAlert } from 'react-alert'
-
+import { ArrowUpIcon, ArrowDownIcon } from '@chakra-ui/icons'
 // @ts-ignore
 import Client from '@pioneer-platform/pioneer-client'
-//let spec = 'https://pioneers.dev/spec/swagger.json'
-let spec = 'http://127.0.0.1:9001/spec/swagger.json'
+let spec = 'https://pioneers.dev/spec/swagger.json'
+//let spec = 'http://127.0.0.1:9001/spec/swagger.json'
 
 import {
   createColumnHelper,
@@ -27,6 +27,8 @@ const columnHelper = createColumnHelper<any>()
 const ReviewDapps = () => {
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
   // const alert = useAlert()
+  const [votedUpNames, setVotedUpNames] = React.useState(() => [])
+  const [votedDownNames, setVotedDownNames] = React.useState(() => [])
   const [data, setData] = React.useState(() => [{
     "name": "etherscan",
     "app": "https://etherscan.io/",
@@ -56,6 +58,19 @@ const ReviewDapps = () => {
     "popularity": 0
   }])
 
+  let isUpActive = function(name:string){
+    console.log("isUpActive: ",name)
+    // @ts-ignore
+    if(votedUpNames.indexOf(name) >= 0){
+      console.log("isUpActive: TRUE",name)
+      return 'green'
+    } else {
+      console.log("isUpActive: FALSE",name)
+      return 'gray'
+    }
+  }
+
+
   const columns = [
     columnHelper.accessor('image', {
       cell: info => <Image
@@ -78,83 +93,37 @@ const ReviewDapps = () => {
       footer: info => info.column.id,
     }),
     columnHelper.accessor('name', {
+      id: 'upvote',
+      cell: info => <Button
+          onClick={() => upVote(info.getValue())}
+      ><ArrowUpIcon w={8} h={8} color="green.500" /></Button>,
+      header: () => <span>upvote</span>,
+      footer: info => info.column.id,
+    }),
+    columnHelper.accessor('name', {
+      id: 'downvote',
+      cell: info => <Button onClick={() => downVote(info.getValue())}><ArrowDownIcon w={8} h={8} color="red.500" /></Button>,
+      header: () => <span>downvote</span>,
+      footer: info => info.column.id,
+    }),
+    columnHelper.accessor('name', {
       id: 'edit',
       cell: info => <Button onClick={() => editEntry(info.getValue())}>Edit</Button>,
       header: () => <span>edit</span>,
       footer: info => info.column.id,
     }),
-    columnHelper.accessor('name', {
-      id: 'approve',
-      cell: info => <Button onClick={() => whitelistEntry(info.getValue())}>approve</Button>,
-      header: () => <span>approve</span>,
-      footer: info => info.column.id,
-    }),
+    // columnHelper.accessor('name', {
+    //   id: 'approve',
+    //   cell: info => <Button onClick={() => whitelistEntry(info.getValue())}>approve</Button>,
+    //   header: () => <span>approve</span>,
+    //   footer: info => info.column.id,
+    // }),
   ]
 
   let editEntry = async function(name:string){
     try{
       //open modal
       console.log("edit name: ",name)
-    }catch(e){
-      console.error(e)
-    }
-  }
-
-  let whitelistEntry = async function(name:string){
-    try{
-      let queryKey = localStorage.getItem('queryKey')
-      let username= localStorage.getItem('username')
-      if (!queryKey) {
-        console.log("Creating new queryKey~!")
-        queryKey = 'key:' + uuidv4()
-        localStorage.setItem('queryKey', queryKey)
-      }
-      if (!username) {
-        console.log("Creating new username~!")
-        username = 'user:' + uuidv4()
-        username = username.substring(0, 13);
-        console.log("Creating new username~! username: ", username)
-        localStorage.setItem('username', username)
-      }
-
-      let config = {
-        queryKey,
-        username,
-        spec
-      }
-      console.log("config: ",config)
-
-      //get config
-      let client = new Client(spec,config)
-      let pioneer = await client.init()
-
-      //open modal
-      console.log("whitelistEntry name: ",name)
-
-      let entry = data.filter(function (e) { return e.name === name; })[0];
-      console.log("entry: ",entry)
-
-      let payload:any = {
-        name,
-        app:entry.app
-      }
-      payload = JSON.stringify(payload)
-
-      if(!wallet || !wallet.provider) throw Error("Onbord not setup!")
-      const ethersProvider = new ethers.providers.Web3Provider(wallet.provider, 'any')
-      const signer = ethersProvider.getSigner()
-      let signature = await signer.signMessage(payload)
-      let address = wallet?.accounts[0]?.address
-      let whitelist:any = {}
-      whitelist.signer = address
-      whitelist.payload = payload
-      whitelist.signature = signature
-      if(!address) throw Error("address required!")
-
-      console.log("whitelist: ",whitelist)
-      let resultWhitelist = await pioneer.WhitelistApp("",whitelist)
-      console.log("resultWhitelist: ",resultWhitelist.data)
-      // alert.show(resultWhitelist.data)
     }catch(e){
       console.error(e)
     }
@@ -208,6 +177,134 @@ const ReviewDapps = () => {
     onStart()
   }, [])
 
+  let upVote = async function(name:string){
+    try{
+      //open modal
+      console.log("upVote: ",name)
+      // @ts-ignore
+      // votedUpNames.push(name)
+      // setVotedUpNames(votedUpNames)
+      // console.log("votedUpNames: ",votedUpNames)
+
+      let queryKey = localStorage.getItem('queryKey')
+      let username= localStorage.getItem('username')
+      if (!queryKey) {
+        console.log("Creating new queryKey~!")
+        queryKey = 'key:' + uuidv4()
+        localStorage.setItem('queryKey', queryKey)
+      }
+      if (!username) {
+        console.log("Creating new username~!")
+        username = 'user:' + uuidv4()
+        username = username.substring(0, 13);
+        console.log("Creating new username~! username: ", username)
+        localStorage.setItem('username', username)
+      }
+
+      let config = {
+        queryKey,
+        username,
+        spec
+      }
+      console.log("config: ",config)
+
+      //get config
+      let client = new Client(spec,config)
+      let pioneer = await client.init()
+
+      //update entry
+      let entry = {
+        "name":"etherscan",
+        "vote":"up"
+      }
+      //toString
+      let payload = JSON.stringify(entry)
+
+      if(!wallet || !wallet.provider) throw Error("Onbord not setup!")
+      const ethersProvider = new ethers.providers.Web3Provider(wallet.provider, 'any')
+      const signer = ethersProvider.getSigner()
+      let signature = await signer.signMessage(payload)
+      let address = wallet?.accounts[0]?.address
+      let update:any = {}
+      update.signer = address
+      update.payload = payload
+      update.signature = signature
+      if(!address) throw Error("address required!")
+      //submit as admin
+      console.log("update: ",update)
+      let resultWhitelist = await pioneer.VoteOnApp("",update)
+      console.log("resultWhitelist: ",resultWhitelist)
+
+    }catch(e){
+      console.error(e)
+    }
+  }
+
+  let downVote = async function(name:string){
+    try{
+      //open modal
+      console.log("downVote: ",name)
+      let queryKey = localStorage.getItem('queryKey')
+      let username= localStorage.getItem('username')
+      if (!queryKey) {
+        console.log("Creating new queryKey~!")
+        queryKey = 'key:' + uuidv4()
+        localStorage.setItem('queryKey', queryKey)
+      }
+      if (!username) {
+        console.log("Creating new username~!")
+        username = 'user:' + uuidv4()
+        username = username.substring(0, 13);
+        console.log("Creating new username~! username: ", username)
+        localStorage.setItem('username', username)
+      }
+
+      let config = {
+        queryKey,
+        username,
+        spec
+      }
+      console.log("config: ",config)
+
+      //get config
+      let client = new Client(spec,config)
+      let pioneer = await client.init()
+      //update entry
+      let entry = {
+        "name":"etherscan",
+        "vote":"down"
+      }
+      //toString
+      let payload = JSON.stringify(entry)
+
+      if(!wallet || !wallet.provider) throw Error("Onbord not setup!")
+      const ethersProvider = new ethers.providers.Web3Provider(wallet.provider, 'any')
+      const signer = ethersProvider.getSigner()
+      let signature = await signer.signMessage(payload)
+      let address = wallet?.accounts[0]?.address
+      let update:any = {}
+      update.signer = address
+      update.payload = payload
+      update.signature = signature
+      if(!address) throw Error("address required!")
+      //submit as admin
+      console.log("update: ",update)
+      let resultWhitelist = await pioneer.VoteOnApp("",update)
+      console.log("resultWhitelist: ",resultWhitelist)
+    }catch(e){
+      console.error(e)
+    }
+  }
+
+  let submitVotes = async function(){
+    try{
+      //open modal
+      console.log("submitVotes: ")
+    }catch(e){
+      console.error(e)
+    }
+  }
+
   const table = useReactTable({
     data,
     columns,
@@ -247,6 +344,7 @@ const ReviewDapps = () => {
           </tbody>
         </table>
         <div className="h-4" />
+        <Button onClick={submitVotes}>Sign and Submit Votes</Button>
       </div>
     </div>
   );

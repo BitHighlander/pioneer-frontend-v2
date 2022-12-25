@@ -3,6 +3,7 @@
   "version": "0.1.1",
   "author": "highlander",
   "scripts": {
+    "clean": "rm -R node_modules",
     "yarn": "yarn",
     "dev": "vite",
     "build": "vite build",
