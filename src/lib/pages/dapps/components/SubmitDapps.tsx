@@ -14,8 +14,8 @@ import { ethers } from 'ethers'
 
 // @ts-ignore
 import Client from '@pioneer-platform/pioneer-client'
-let spec = 'https://pioneers.dev/spec/swagger.json'
-// let spec = 'http://127.0.0.1:9001/spec/swagger.json'
+//let spec = 'https://pioneers.dev/spec/swagger.json'
+let spec = 'http://127.0.0.1:9001/spec/swagger.json'
 
 const SubmitDapps = () => {
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
@@ -41,6 +41,7 @@ const SubmitDapps = () => {
       let dapp:any = {}
       dapp.name = name
       dapp.app = app
+      dapp.homepage = app
       dapp.image = image
       dapp.tags = ['ethereum']
 
@@ -72,7 +73,8 @@ const SubmitDapps = () => {
 
       let payload:any = {
         name,
-        app
+        app,
+        homepage:app
       }
       payload = JSON.stringify(payload)
 
@@ -115,7 +117,7 @@ const SubmitDapps = () => {
         <Input type='email' value={app} onChange={handleInputChangeApp} />
         {!isError ? (
           <FormHelperText>
-            Enter the URL of the dapp
+            Enter the URL of the dapp application
           </FormHelperText>
         ) : (
           <FormErrorMessage>URL is required.</FormErrorMessage>
@@ -126,7 +128,7 @@ const SubmitDapps = () => {
         <Input type='email' value={image} onChange={handleInputChangeImage} />
         {!isError ? (
           <FormHelperText>
-            Enter the URL of image for the Dapp
+            Enter the URL of image for the Dapp. this MUST be a valid URL, and not a encoding!
           </FormHelperText>
         ) : (
           <FormErrorMessage>image URL is required.</FormErrorMessage>
