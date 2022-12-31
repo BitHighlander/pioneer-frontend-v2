@@ -1,5 +1,16 @@
-import { Grid, Image, Button } from "@chakra-ui/react";
-import React from 'react'
+import {
+  Grid,
+  Image,
+  Button,
+  Box,
+  Text,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader, ModalCloseButton, ModalBody, Textarea, ModalFooter
+} from "@chakra-ui/react";
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom/client'
 import { useConnectWallet } from "@web3-onboard/react";
 import { v4 as uuidv4 } from 'uuid';
@@ -8,8 +19,8 @@ import { ethers } from 'ethers'
 
 // @ts-ignore
 import Client from '@pioneer-platform/pioneer-client'
-// let spec = 'https://pioneers.dev/spec/swagger.json'
-let spec = 'http://127.0.0.1:9001/spec/swagger.json'
+let spec = 'https://pioneers.dev/spec/swagger.json'
+//let spec = 'http://127.0.0.1:9001/spec/swagger.json'
 
 import {
   createColumnHelper,
@@ -18,14 +29,16 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 
-import { useEffect } from "react";
-
 const columnHelper = createColumnHelper<any>()
 
 
 
 const WhitelistAssets = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
+  const [query, setQuery] = useState('bitcoin...');
+  const [timeOut, setTimeOut] = useState(null);
+  let [value, setValue] = React.useState("");
   // const alert = useAlert()
   const [data, setData] = React.useState(() => [{
     "name": "etherscan",
@@ -81,76 +94,121 @@ const WhitelistAssets = () => {
       cell: info => info.getValue(),
       footer: info => info.column.id,
     }),
+    columnHelper.accessor("name", {
+      id: "edit",
+      cell: (info) => (
+          <Button onClick={() => editEntry(info.getValue())}>Edit</Button>
+      ),
+      header: () => <span>edit</span>,
+      footer: (info) => info.column.id,
+    }),
   ]
 
-  let editEntry = async function(name:string){
-    try{
-      //open modal
-      console.log("edit name: ",name)
-    }catch(e){
-      console.error(e)
+  let editEntry = async function (name: string) {
+    try {
+      // open modal
+      console.log("edit name: ", name);
+      onOpen();
+      const entry = data.filter(function (e) {
+        return e.name === name;
+      })[0];
+      console.log("entry: ", entry);
+      const prettyJson = JSON.stringify(entry, null, 2);
+      setValue(prettyJson);
+    } catch (e) {
+      console.error(e);
     }
-  }
+  };
 
-  let whitelistEntry = async function(name:string){
-    try{
-      let queryKey = localStorage.getItem('queryKey')
-      let username= localStorage.getItem('username')
+  const onSubmitEdit = async function () {
+    try {
+      let queryKey = localStorage.getItem("queryKey");
+      let username = localStorage.getItem("username");
       if (!queryKey) {
-        console.log("Creating new queryKey~!")
-        queryKey = 'key:' + uuidv4()
-        localStorage.setItem('queryKey', queryKey)
+        console.log("Creating new queryKey~!");
+        queryKey = `key:${uuidv4()}`;
+        localStorage.setItem("queryKey", queryKey);
       }
       if (!username) {
-        console.log("Creating new username~!")
-        username = 'user:' + uuidv4()
+        console.log("Creating new username~!");
+        username = `user:${uuidv4()}`;
         username = username.substring(0, 13);
-        console.log("Creating new username~! username: ", username)
-        localStorage.setItem('username', username)
+        console.log("Creating new username~! username: ", username);
+        localStorage.setItem("username", username);
       }
 
-      let config = {
+      const config = {
         queryKey,
         username,
-        spec
+        spec,
+      };
+      console.log("config: ", config);
+
+      // get config
+      const client = new Client(spec, config);
+      const pioneer = await client.init();
+
+      try {
+        const diffJson = (
+            obj1: { [x: string]: any },
+            obj2: { [x: string]: any }
+        ) => {
+          const diffArray = [];
+          for (const key in obj1) {
+            if (obj2[key] !== undefined && typeof obj2[key] !== "object") {
+              if (obj1[key] !== obj2[key]) {
+                diffArray.push({
+                  key,
+                  value: obj2[key],
+                });
+              }
+            }
+          }
+          return diffArray;
+        };
+        value = JSON.parse(value);
+        // entry DB
+        const entry = data.filter(function (e) {
+          // @ts-ignore
+          return e.name === value.name;
+        })[0];
+        console.log("entry: ", entry);
+        // @ts-ignore
+        const diffs = diffJson(entry, value);
+
+        for (let i = 0; i < diffs.length; i++) {
+          const diff: any = diffs[i];
+          // @ts-ignore
+          diff.service = value.service;
+          const payload = JSON.stringify(diff);
+
+          if (!wallet || !wallet.provider) throw Error("Onbord not setup!");
+          const ethersProvider = new ethers.providers.Web3Provider(
+              wallet.provider,
+              "any"
+          );
+          const signer = ethersProvider.getSigner();
+          const signature = await signer.signMessage(payload);
+          const address = wallet?.accounts[0]?.address;
+          const update: any = {};
+          update.signer = address;
+          update.payload = payload;
+          update.signature = signature;
+          if (!address) throw Error("address required!");
+          // submit as admin
+          console.log("update: ", update);
+          const resultWhitelist = await pioneer.UpdateNode("", update);
+          console.log("resultWhitelist: ", resultWhitelist);
+        }
+      } catch (e) {
+        // alert invalid JSON!
+        console.error("e: ", e);
       }
-      console.log("config: ",config)
-
-      //get config
-      let client = new Client(spec,config)
-      let pioneer = await client.init()
-
-      //open modal
-      console.log("whitelistEntry name: ",name)
-
-      let entry = data.filter(function (e) { return e.name === name; })[0];
-      console.log("entry: ",entry)
-
-      // let payload:any = {
-      //   name,
-      //   app:entry.app
-      // }
-      // payload = JSON.stringify(payload)
-      //
-      // if(!wallet || !wallet.provider) throw Error("Onbord not setup!")
-      // const ethersProvider = new ethers.providers.Web3Provider(wallet.provider, 'any')
-      // const signer = ethersProvider.getSigner()
-      // let signature = await signer.signMessage(payload)
-      // let address = wallet?.accounts[0]?.address
-      // let whitelist:any = {}
-      // whitelist.signer = address
-      // whitelist.payload = payload
-      // whitelist.signature = signature
-      // if(!address) throw Error("address required!")
-      //
-      // console.log("whitelist: ",whitelist)
-      // let resultWhitelist = await pioneer.WhitelistApp("",whitelist)
-      // console.log("resultWhitelist: ",resultWhitelist.data)
-      // alert.show(resultWhitelist.data)
-    }catch(e){
-      console.error(e)
+    } catch (e) {
+      console.error(e);
     }
-  }
+  };
+
 
   let onStart = async function(){
     try{
@@ -200,14 +258,96 @@ const WhitelistAssets = () => {
     onStart()
   }, [])
 
+  const handleKeyPress = (event:any) => {
+    if (timeOut) {
+      clearTimeout(timeOut);
+    }
+    setQuery(event.target.value);
+    // @ts-ignore
+    setTimeOut(setTimeout(() => {
+      search(query);
+    }, 1000));
+  }
+
+  let onSearch = async function(query:string){
+    try{
+      let config = { queryKey: 'key:public', spec }
+      let Api = new Client(spec, config)
+      let api = await Api.init()
+
+      let KeepKeyPage1 = await api.SearchByName(query)
+      console.log("KeepKeyPage1: ",KeepKeyPage1.data)
+      setData(KeepKeyPage1.data)
+    }catch(e){
+      console.error(e)
+    }
+  }
+
+  const search = async (query:string) => {
+    // console.log("event: ",event.target.value)
+    console.log("query: ",query)
+    // let searchNew = event.target.value
+    // setSearch(searchNew)
+
+    let config = { queryKey: 'key:public', spec }
+    let Api = new Client(spec, config)
+    let api = await Api.init()
+
+    let KeepKeyPage1 = await api.SearchByNetworkName(query)
+    console.log("KeepKeyPage1: ",KeepKeyPage1.data)
+    setData(KeepKeyPage1.data)
+  };
+
+  const onClear = async () => {
+    setQuery("")
+  };
+
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
   })
-
+  const handleInputChange = (e: { target: { value: any } }) => {
+    const inputValue = e.target.value;
+    setValue(inputValue);
+  };
   return (
     <div>
+      <Modal isOpen={isOpen} onClose={onClose} size="100px">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Edit Entry</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Textarea
+                height="600px"
+                value={value}
+                onChange={handleInputChange}
+                placeholder="Here is a sample placeholder"
+                size="sm"
+            />
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={onClose}>
+              Close
+            </Button>
+            <Button onClick={onSubmitEdit} variant="green">
+              Submit changes
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      <Box>
+        <Text>Search:</Text>
+        <input
+            onFocus={onClear}
+            value={query}
+            onChange={handleKeyPress}
+            type='search'
+            style={{border: '2px solid black', padding: '15px'}}
+        />
+      </Box>
       <div className="p-2">
         <table>
           <thead>
