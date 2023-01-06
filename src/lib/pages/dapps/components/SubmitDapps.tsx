@@ -45,8 +45,8 @@ import { Select as SelectImported, components } from "chakra-react-select";
 
 // @ts-ignore
 import Client from '@pioneer-platform/pioneer-client'
-// let spec = 'https://pioneers.dev/spec/swagger.json'
-let spec = 'http://127.0.0.1:9001/spec/swagger.json'
+let spec = 'https://pioneers.dev/spec/swagger.json'
+//let spec = 'http://127.0.0.1:9001/spec/swagger.json'
 
 let protocols = [
   {
@@ -93,6 +93,7 @@ const SubmitDapps = () => {
       dapp.name = name
       dapp.app = app
       dapp.homepage = app
+      dapp.tags = [...blockchainsSupported,...protocols]
       dapp.image = image
       dapp.minVersion = minVersion
       dapp.protocols = protocolsSupported
