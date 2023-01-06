@@ -28,9 +28,8 @@ import { v4 as uuidv4 } from "uuid";
 // import { useAlert } from 'react-alert'
 
 // @ts-ignore
-// let spec = 'http://127.0.0.1:9001/spec/swagger.json'
-
-const spec = "https://pioneers.dev/spec/swagger.json";
+let spec = 'http://127.0.0.1:9001/spec/swagger.json'
+// const spec = "https://pioneers.dev/spec/swagger.json";
 
 const columnHelper = createColumnHelper<any>();
 
