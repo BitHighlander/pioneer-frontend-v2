@@ -20,7 +20,7 @@ const Dapps = () => {
           <Tab>Chart a newly discovered Dapp</Tab>
         </TabList>
 
-        <TabPanels onClick>
+        <TabPanels>
           <TabPanel>
             <WhitelistDapps />
           </TabPanel>
