@@ -476,6 +476,7 @@ const ReviewDapps = () => {
         </ModalContent>
       </Modal>
       <div className="p-2">
+        <Button onClick={onStart}>Refresh</Button>
         <table>
           <thead>
           {table.getHeaderGroups().map(headerGroup => (

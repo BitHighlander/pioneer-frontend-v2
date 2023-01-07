@@ -163,11 +163,12 @@ const WhitelistDapps = () => {
       })[0];
       console.log("entry: ", entry);
 
-      let payload: any = {
-        name,
-        app: entry.app,
-      };
-      payload = JSON.stringify(payload);
+      // let payload: any = {
+      //   name,
+      //   app: entry.app,
+      // };
+      // payload = JSON.stringify(payload);
+      let payload = `{"type": "dapp", "name": "${name}", "url": "${entry.app}"}`
 
       if (!wallet || !wallet.provider) throw Error("Onbord not setup!");
       const ethersProvider = new ethers.providers.Web3Provider(
@@ -364,6 +365,7 @@ const WhitelistDapps = () => {
         </ModalContent>
       </Modal>
       <div className="p-2">
+        <Button onClick={onStart}>Refresh</Button>
         <table>
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
