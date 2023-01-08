@@ -63,6 +63,21 @@ let protocols = [
   }
 ]
 
+let features = [
+  {
+    value:'basic-transfers',
+    label:'basic-transfers'
+  },
+  {
+    value:'defi-earn',
+    label:'defi-earn'
+  },
+  {
+    value:'defi-swap',
+    label:'defi-swap'
+  }
+]
+
 const SubmitDapps = () => {
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
 
@@ -72,6 +87,7 @@ const SubmitDapps = () => {
   const [minVersion, setMinVersion] = React.useState('')
   const [blockchains, setBlockchains] = React.useState([])
   const [protocolsSupported, setProtocolsSupported] = React.useState([])
+  const [featuresSupported, setFeaturesSupported] = React.useState([])
   const [isRest, setIsRest] = React.useState(false)
   const [blockchainsSupported, setBlockchainsSupported] = React.useState([])
   const handleInputChangeName = (e:any) => setName(e.target.value)
@@ -98,6 +114,7 @@ const SubmitDapps = () => {
       dapp.minVersion = minVersion
       dapp.protocols = protocolsSupported
       dapp.blockchains = blockchainsSupported
+      dapp.features = featuresSupported
 
       let queryKey = localStorage.getItem('queryKey')
       let username= localStorage.getItem('username')
@@ -275,6 +292,15 @@ const SubmitDapps = () => {
     }
   };
 
+  let onSelectedFeatures = async function(input: any){
+    try{
+      console.log("input: onSelectedFeatures: ",input)
+      setFeaturesSupported(input)
+    }catch(e){
+      console.error(e)
+    }
+  };
+
   return (
     <div>
       <FormControl isInvalid={isError}>
@@ -350,6 +376,18 @@ const SubmitDapps = () => {
           )}
         </FormControl>
       </div>:<div></div>}
+      <FormControl isInvalid={isError}>
+        <FormLabel>Features Supported</FormLabel>
+        <SelectImported
+            isMulti
+            name="features"
+            options={features}
+            placeholder="basic-transfers... defi-earn...."
+            closeMenuOnSelect={true}
+            // components={{ Option: IconOption }}
+            onChange={onSelectedFeatures}
+        ></SelectImported>
+      </FormControl>
       <Button
         mt={4}
         colorScheme='teal'
