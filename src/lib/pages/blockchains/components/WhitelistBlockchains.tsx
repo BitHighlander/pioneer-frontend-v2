@@ -1,4 +1,14 @@
-import { Grid, Image, Button } from "@chakra-ui/react";
+import {
+  Grid,
+  Image,
+  Button,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody, Textarea, ModalFooter, useDisclosure
+} from "@chakra-ui/react";
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { useConnectWallet } from "@web3-onboard/react";
@@ -25,6 +35,8 @@ const columnHelper = createColumnHelper<any>()
 
 
 const WhitelistBlockchains = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  let [value, setValue] = React.useState("");
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
   // const alert = useAlert()
   const [data, setData] = React.useState(() => [{
@@ -91,14 +103,22 @@ const WhitelistBlockchains = () => {
     }),
   ]
 
-  let editEntry = async function(name:string){
-    try{
-      //open modal
-      console.log("edit name: ",name)
-    }catch(e){
-      console.error(e)
+  let editEntry = async function (name: string) {
+    try {
+      // open modal
+      console.log("edit name: ", name);
+      onOpen();
+      const entry = data.filter(function (e) {
+        return e.name === name;
+      })[0];
+      console.log("entry: ", entry);
+      const prettyJson = JSON.stringify(entry, null, 2);
+      setValue(prettyJson);
+    } catch (e) {
+      console.error(e);
     }
-  }
+  };
+
 
   let whitelistEntry = async function(name:string){
     try{
@@ -203,6 +223,95 @@ const WhitelistBlockchains = () => {
     }
   }
 
+  const onSubmitEdit = async function () {
+    try {
+      let queryKey = localStorage.getItem("queryKey");
+      let username = localStorage.getItem("username");
+      if (!queryKey) {
+        console.log("Creating new queryKey~!");
+        queryKey = `key:${uuidv4()}`;
+        localStorage.setItem("queryKey", queryKey);
+      }
+      if (!username) {
+        console.log("Creating new username~!");
+        username = `user:${uuidv4()}`;
+        username = username.substring(0, 13);
+        console.log("Creating new username~! username: ", username);
+        localStorage.setItem("username", username);
+      }
+
+      const config = {
+        queryKey,
+        username,
+        spec,
+      };
+      console.log("config: ", config);
+
+      // get config
+      const client = new Client(spec, config);
+      const pioneer = await client.init();
+
+      try {
+        const diffJson = (
+            obj1: { [x: string]: any },
+            obj2: { [x: string]: any }
+        ) => {
+          const diffArray = [];
+          for (const key in obj1) {
+            if (obj2[key] !== undefined && typeof obj2[key] !== "object") {
+              if (obj1[key] !== obj2[key]) {
+                diffArray.push({
+                  key,
+                  value: obj2[key],
+                });
+              }
+            }
+          }
+          return diffArray;
+        };
+        value = JSON.parse(value);
+        // entry DB
+        const entry = data.filter(function (e) {
+          // @ts-ignore
+          return e.name === value.name;
+        })[0];
+        console.log("entry: ", entry);
+        // @ts-ignore
+        const diffs = diffJson(entry, value);
+
+        for (let i = 0; i < diffs.length; i++) {
+          const diff: any = diffs[i];
+          // @ts-ignore
+          diff.name = value.name;
+          const payload = JSON.stringify(diff);
+
+          if (!wallet || !wallet.provider) throw Error("Onbord not setup!");
+          const ethersProvider = new ethers.providers.Web3Provider(
+              wallet.provider,
+              "any"
+          );
+          const signer = ethersProvider.getSigner();
+          const signature = await signer.signMessage(payload);
+          const address = wallet?.accounts[0]?.address;
+          const update: any = {};
+          update.signer = address;
+          update.payload = payload;
+          update.signature = signature;
+          if (!address) throw Error("address required!");
+          // submit as admin
+          console.log("update: ", update);
+          const resultWhitelist = await pioneer.UpdateBlockchain("", update);
+          console.log("resultWhitelist: ", resultWhitelist);
+        }
+      } catch (e) {
+        // alert invalid JSON!
+        console.error("e: ", e);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   //onstart get data
   useEffect(() => {
     onStart()
@@ -214,8 +323,38 @@ const WhitelistBlockchains = () => {
     getCoreRowModel: getCoreRowModel(),
   })
 
+  const handleInputChange = (e: { target: { value: any } }) => {
+    const inputValue = e.target.value;
+    setValue(inputValue);
+  };
+
   return (
     <div>
+      <Modal isOpen={isOpen} onClose={onClose} size="100px">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Edit Entry</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Textarea
+                height="600px"
+                value={value}
+                onChange={handleInputChange}
+                placeholder="Here is a sample placeholder"
+                size="sm"
+            />
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={onClose}>
+              Close
+            </Button>
+            <Button onClick={onSubmitEdit} variant="green">
+              Submit changes
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       <div className="p-2">
         <table>
           <thead>

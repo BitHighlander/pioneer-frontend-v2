@@ -263,10 +263,15 @@ const SubmitDapps = () => {
         </Option>
     )};
 
-  let onSelectedBlockchains = async function(input: any){
+  let onSelectedBlockchains = async function(inputs: any){
     try{
       console.log("input: onSelectedBlockchains: ",input)
-      setBlockchainsSupported(input)
+      let blockchains = []
+      for(let i = 0; i < inputs.length; i++){
+        let input = inputs[i]
+        blockchains.push(input.name)
+      }
+      setBlockchainsSupported(blockchains)
     }catch(e){
       console.error(e)
     }
