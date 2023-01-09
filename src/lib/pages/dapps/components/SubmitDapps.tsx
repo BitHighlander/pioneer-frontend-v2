@@ -265,8 +265,8 @@ const SubmitDapps = () => {
 
   let onSelectedBlockchains = async function(inputs: any){
     try{
-      console.log("input: onSelectedBlockchains: ",input)
-      let blockchains = []
+      console.log("input: onSelectedBlockchains: ",inputs)
+      let blockchains:any = []
       for(let i = 0; i < inputs.length; i++){
         let input = inputs[i]
         blockchains.push(input.name)
