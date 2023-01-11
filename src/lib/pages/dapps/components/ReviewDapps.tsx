@@ -20,7 +20,7 @@ import { useToast } from '@chakra-ui/react'
 // @ts-ignore
 import Client from '@pioneer-platform/pioneer-client'
 let spec = 'https://pioneers.dev/spec/swagger.json'
-//let spec = 'http://127.0.0.1:9001/spec/swagger.json'
+// let spec = 'http://127.0.0.1:9001/spec/swagger.json'
 
 import {
   createColumnHelper,
@@ -127,6 +127,12 @@ const ReviewDapps = () => {
     columnHelper.accessor('name', {
       id: 'edit',
       cell: info => <Button onClick={() => editEntry(info.getValue())}>Edit</Button>,
+      header: () => <span>edit</span>,
+      footer: info => info.column.id,
+    }),
+    columnHelper.accessor('revoke', {
+      id: 'revoke',
+      cell: info => <Button colorScheme='red' onClick={() => onRevokeEntry(info.getValue())}>revoke</Button>,
       header: () => <span>edit</span>,
       footer: info => info.column.id,
     }),
@@ -447,6 +453,63 @@ const ReviewDapps = () => {
   let handleInputChange = (e: { target: { value: any; }; }) => {
     let inputValue = e.target.value
     setValue(inputValue)
+  }
+
+  let onRevokeEntry = async function(entry:any){
+    try{
+      let queryKey = localStorage.getItem('queryKey')
+      let username= localStorage.getItem('username')
+      if (!queryKey) {
+        console.log("Creating new queryKey~!")
+        queryKey = 'key:' + uuidv4()
+        localStorage.setItem('queryKey', queryKey)
+      }
+      if (!username) {
+        console.log("Creating new username~!")
+        username = 'user:' + uuidv4()
+        username = username.substring(0, 13);
+        console.log("Creating new username~! username: ", username)
+        localStorage.setItem('username', username)
+      }
+
+      let config = {
+        queryKey,
+        username,
+        spec
+      }
+      console.log("config: ",config)
+
+      //get config
+      let client = new Client(spec,config)
+      let pioneer = await client.init()
+
+      let payload: any = {
+        action:"revoke",
+        name,
+        app: entry.app,
+      };
+      payload = JSON.stringify(payload);
+
+      //revoking
+      if(!wallet || !wallet.provider) throw Error("Onbord not setup!")
+      const ethersProvider = new ethers.providers.Web3Provider(wallet.provider, 'any')
+      const signer = ethersProvider.getSigner()
+      let signature = await signer.signMessage(payload)
+      let address = wallet?.accounts[0]?.address
+      let update:any = {}
+      update.signer = address
+      update.payload = payload
+      update.signature = signature
+      if(!address) throw Error("address required!")
+      //submit as admin
+      console.log("update: ",update)
+      let resultWhitelist = await pioneer.RevokeApp("",update)
+      console.log("resultWhitelist: ",resultWhitelist)
+
+
+    }catch(e){
+      console.error(e)
+    }
   }
 
   return (

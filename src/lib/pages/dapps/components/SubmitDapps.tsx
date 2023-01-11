@@ -8,6 +8,7 @@ import {
   Stack,
   CardBody,
   Card,
+  Textarea,
   Select,
   CardFooter,
   Heading,
@@ -46,7 +47,7 @@ import { Select as SelectImported, components } from "chakra-react-select";
 // @ts-ignore
 import Client from '@pioneer-platform/pioneer-client'
 let spec = 'https://pioneers.dev/spec/swagger.json'
-//let spec = 'http://127.0.0.1:9001/spec/swagger.json'
+// let spec = 'http://127.0.0.1:9001/spec/swagger.json'
 
 let protocols = [
   {
@@ -84,6 +85,7 @@ const SubmitDapps = () => {
   const [name, setName] = React.useState('')
   const [app, setApp] = React.useState('')
   const [image, setImage] = React.useState('')
+  const [description, setDescription] = React.useState('')
   const [minVersion, setMinVersion] = React.useState('')
   const [blockchains, setBlockchains] = React.useState([])
   const [protocolsSupported, setProtocolsSupported] = React.useState([])
@@ -94,6 +96,7 @@ const SubmitDapps = () => {
   const handleInputChangeApp = (e:any) => setApp(e.target.value)
   const handleInputChangeImage = (e:any) => setImage(e.target.value)
   const handleInputChangeMinVersion = (e:any) => setMinVersion(e.target.value)
+  const handleInputChangeDescription = (e:any) => setDescription(e.target.value)
 
 
   // const isError = input === ''
@@ -112,6 +115,7 @@ const SubmitDapps = () => {
       dapp.tags = [...blockchainsSupported,...protocols]
       dapp.image = image
       dapp.minVersion = minVersion
+      dapp.description = description
       dapp.protocols = protocolsSupported
       dapp.blockchains = blockchainsSupported
       dapp.features = featuresSupported
@@ -339,6 +343,17 @@ const SubmitDapps = () => {
           </FormHelperText>
         ) : (
           <FormErrorMessage>image URL is required.</FormErrorMessage>
+        )}
+      </FormControl>
+      <FormControl isInvalid={isError}>
+        <FormLabel>Image URL</FormLabel>
+        <Textarea placeholder="This Dapp is great because it does..... " value={description} onChange={handleInputChangeDescription} />
+        {!isError ? (
+            <FormHelperText>
+              Describe the Dapp in a short paragraph.
+            </FormHelperText>
+        ) : (
+            <FormErrorMessage>description is required.</FormErrorMessage>
         )}
       </FormControl>
       <FormControl isInvalid={isError}>
