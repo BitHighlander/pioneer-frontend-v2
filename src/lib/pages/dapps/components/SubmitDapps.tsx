@@ -76,7 +76,11 @@ let features = [
   {
     value:'defi-swap',
     label:'defi-swap'
-  }
+  },
+  {
+    value:'defi-governence',
+    label:'defi-governence'
+  },
 ]
 
 const SubmitDapps = () => {
@@ -346,7 +350,7 @@ const SubmitDapps = () => {
         )}
       </FormControl>
       <FormControl isInvalid={isError}>
-        <FormLabel>Image URL</FormLabel>
+        <FormLabel>Dapp Desription</FormLabel>
         <Textarea placeholder="This Dapp is great because it does..... " value={description} onChange={handleInputChangeDescription} />
         {!isError ? (
             <FormHelperText>

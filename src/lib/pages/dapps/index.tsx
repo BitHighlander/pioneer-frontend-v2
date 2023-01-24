@@ -1,7 +1,7 @@
 
-import React from 'react'
+import React, {useEffect} from 'react'
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
-
+import { useConnectWallet } from "@web3-onboard/react";
 
 import WhitelistDapps from "./components/WhitelistDapps";
 import SubmitDapps from "./components/SubmitDapps";

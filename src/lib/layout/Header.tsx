@@ -35,9 +35,24 @@ const Header = () => {
   const [dapps, setDapps] = useState(0)
   const [fox, setFox] = useState(0)
 
+  useEffect(() => {
+    const previouslyConnectedWallets = JSON.parse(
+        window.localStorage.getItem('connectedWallets')
+    )
+
+    if (previouslyConnectedWallets?.length) {
+      async function setWalletFromLocalStorage() {
+        const walletConnected = await connect({
+          autoSelect: previouslyConnectedWallets[0]
+        })
+        console.log('connected wallets: ', walletConnected)
+      }
+      setWalletFromLocalStorage()
+    }
+  }, [connect])
+
   let onStart = async function(){
     try{
-      if (!wallet) await connect();
       let queryKey = localStorage.getItem('queryKey')
       let username= localStorage.getItem('username')
       if (!queryKey) {

@@ -33,8 +33,6 @@ import { useEffect } from "react";
 
 const columnHelper = createColumnHelper<any>()
 
-
-
 const ReviewDapps = () => {
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -146,8 +144,6 @@ const ReviewDapps = () => {
 
   let onStart = async function(){
     try{
-      if(!wallet)
-        await connect();
       let queryKey = localStorage.getItem('queryKey')
       let username= localStorage.getItem('username')
       if (!queryKey) {

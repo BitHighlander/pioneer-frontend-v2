@@ -284,7 +284,8 @@ const WhitelistDapps = () => {
 
   const onStart = async function () {
     try {
-      if (!wallet) await connect();
+      if(!wallet)
+        await connect();
       let queryKey = localStorage.getItem("queryKey");
       let username = localStorage.getItem("username");
       if (!queryKey) {
