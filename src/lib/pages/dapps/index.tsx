@@ -5,7 +5,8 @@ import { useConnectWallet } from "@web3-onboard/react";
 
 import WhitelistDapps from "./components/WhitelistDapps";
 import SubmitDapps from "./components/SubmitDapps";
-import ReviewDapps from "./components/ReviewDapps";
+import VoteDapps from "./components/VoteDapps";
+// import ReviewDapps from "./components/ReviewDapps";
 
 const Dapps = () => {
 
@@ -18,6 +19,7 @@ const Dapps = () => {
           <Tab>Apps Pending Review</Tab>
           <Tab>Apps live for voting</Tab>
           <Tab>Chart a newly discovered Dapp</Tab>
+          {/*<Tab>Review Live Dapps</Tab>*/}
         </TabList>
 
         <TabPanels>
@@ -25,11 +27,14 @@ const Dapps = () => {
             <WhitelistDapps />
           </TabPanel>
           <TabPanel>
-            <ReviewDapps />
+            <VoteDapps />
           </TabPanel>
           <TabPanel>
             <SubmitDapps />
           </TabPanel>
+          {/*<TabPanel>*/}
+          {/*  <ReviewDapps />*/}
+          {/*</TabPanel>*/}
         </TabPanels>
       </Tabs>
     </div>
