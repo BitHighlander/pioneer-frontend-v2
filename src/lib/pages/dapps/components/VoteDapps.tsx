@@ -652,7 +652,7 @@ const ReviewDapps = () => {
           let diff = {
             name,
             type:"array",
-            action:"push", //push, replace, remove
+            action:"replace", //push, replace, remove
             key:"blockchains",
             "value":blockchainsSupported
           }
@@ -675,39 +675,62 @@ const ReviewDapps = () => {
         }
 
         //check protocols
-
+        // @ts-ignore
+        if(entry?.protocols !== protocolsSupported){
+          console.log("description Has changed!")
+          let diff = {
+            name,
+            type:"array",
+            action:"replace", //push, replace, remove
+            key:"protocols",
+            "value":protocolsSupported
+          }
+          let payload = JSON.stringify(diff)
+          if(!wallet || !wallet.provider) throw Error("Onbord not setup!")
+          const ethersProvider = new ethers.providers.Web3Provider(wallet.provider, 'any')
+          const signer = ethersProvider.getSigner()
+          let signature = await signer.signMessage(payload)
+          let address = wallet?.accounts[0]?.address
+          let update:any = {}
+          update.name = name
+          update.signer = address
+          update.payload = payload
+          update.signature = signature
+          if(!address) throw Error("address required!")
+          //submit as admin
+          console.log("update: ",update)
+          let resultWhitelist = await pioneer.UpdateApp("",update)
+          console.log("resultWhitelist: ",resultWhitelist)
+        }
 
         //check features
-
-
-        //entry DB
-        // let entry = data.filter(function (e) { // @ts-ignore
-        //   return e.name === value.name; })[0];
-        // console.log("entry: ",entry)
-        // // @ts-ignore
-        // let diffs = diffJson(entry,value)
-        //
-        // for(let i = 0; i < diffs.length; i++){
-        //   let diff:any = diffs[i]
-        //   // @ts-ignore
-        //   diff.name = value.name
-        //   let payload = JSON.stringify(diff)
-        //
-        //   if(!wallet || !wallet.provider) throw Error("Onbord not setup!")
-        //   const ethersProvider = new ethers.providers.Web3Provider(wallet.provider, 'any')
-        //   const signer = ethersProvider.getSigner()
-        //   let signature = await signer.signMessage(payload)
-        //   let address = wallet?.accounts[0]?.address
-        //   let update:any = {}
-        //   update.signer = address
-        //   update.payload = payload
-        //   update.signature = signature
-        //   if(!address) throw Error("address required!")
-        //   //submit as admin
-        //   console.log("update: ",update)
-        //   let resultWhitelist = await pioneer.UpdateApp("",update)
-        //   console.log("resultWhitelist: ",resultWhitelist)
-        // }
+        // @ts-ignore
+        if(entry?.features !== featuresSupported){
+          console.log("description Has changed!")
+          let diff = {
+            name,
+            type:"array",
+            action:"replace", //push, replace, remove
+            key:"features",
+            "value":featuresSupported
+          }
+          let payload = JSON.stringify(diff)
+          if(!wallet || !wallet.provider) throw Error("Onbord not setup!")
+          const ethersProvider = new ethers.providers.Web3Provider(wallet.provider, 'any')
+          const signer = ethersProvider.getSigner()
+          let signature = await signer.signMessage(payload)
+          let address = wallet?.accounts[0]?.address
+          let update:any = {}
+          update.name = name
+          update.signer = address
+          update.payload = payload
+          update.signature = signature
+          if(!address) throw Error("address required!")
+          //submit as admin
+          console.log("update: ",update)
+          let resultWhitelist = await pioneer.UpdateApp("",update)
+          console.log("resultWhitelist: ",resultWhitelist)
+        }
 
       }catch(e){
         //alert invalid JSON!
