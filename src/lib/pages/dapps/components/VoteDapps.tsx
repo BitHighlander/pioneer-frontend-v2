@@ -496,8 +496,8 @@ const ReviewDapps = () => {
       let blockchainsFormated:any = []
       for(let i = 0; i < blockchains.length; i++){
         let blockchain = blockchains[i]
-        blockchain.value = blockchain.name
-        blockchain.label = blockchain.name
+        blockchain.value = blockchain.name.toLowerCase()
+        blockchain.label = blockchain.name.toLowerCase()
         blockchainsFormated.push(blockchain)
       }
       console.log("blockchainsFormated: ",blockchainsFormated.length)
@@ -735,7 +735,7 @@ const ReviewDapps = () => {
       let blockchains:any = []
       for(let i = 0; i < inputs.length; i++){
         let input = inputs[i]
-        blockchains.push(input.name)
+        blockchains.push(input.name.toLowerCase())
       }
       setBlockchainsSupported(blockchains)
     }catch(e){
