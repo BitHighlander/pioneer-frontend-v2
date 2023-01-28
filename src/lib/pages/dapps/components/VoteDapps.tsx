@@ -464,6 +464,46 @@ const ReviewDapps = () => {
       // @ts-ignore
       setBlockchainsSupported(entry.blockchains)
 
+      let queryKey = localStorage.getItem("queryKey");
+      let username = localStorage.getItem("username");
+      if (!queryKey) {
+        console.log("Creating new queryKey~!");
+        queryKey = `key:${uuidv4()}`;
+        localStorage.setItem("queryKey", queryKey);
+      }
+      if (!username) {
+        console.log("Creating new username~!");
+        username = `user:${uuidv4()}`;
+        username = username.substring(0, 13);
+        console.log("Creating new username~! username: ", username);
+        localStorage.setItem("username", username);
+      }
+
+      const config = {
+        queryKey,
+        username,
+        spec,
+      };
+      console.log("config: ", config);
+
+      // get config
+      const client = new Client(spec, config);
+      const pioneer = await client.init();
+
+      let blockchains = await pioneer.SearchBlockchainsPaginate({limit:1000,skip:0})
+      blockchains = blockchains.data
+      console.log("blockchains: ",blockchains.length)
+      let blockchainsFormated:any = []
+      for(let i = 0; i < blockchains.length; i++){
+        let blockchain = blockchains[i]
+        blockchain.value = blockchain.name
+        blockchain.label = blockchain.name
+        blockchainsFormated.push(blockchain)
+      }
+      console.log("blockchainsFormated: ",blockchainsFormated.length)
+      setBlockchains(blockchainsFormated)
+
+
     }catch(e){
       console.error(e)
     }
