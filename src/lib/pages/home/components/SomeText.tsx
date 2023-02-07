@@ -39,7 +39,7 @@ const SomeText = () => {
       </Link>
       <Link onClick={handleToPioneers}>
         <Text color="gray.500" fontSize="sm">
-          Explore other Pioneers.
+          become a Pioneer.
         </Text>
       </Link>
       <Link href="https://pioneers.dev/docs" isExternal>

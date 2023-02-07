@@ -7,9 +7,19 @@ import {
   ModalContent,
   ModalHeader,
   ModalCloseButton,
-  ModalBody, FormControl, FormLabel, Input, FormHelperText, FormErrorMessage, Textarea, ModalFooter, useDisclosure
+  ModalBody,
+  FormControl,
+  FormLabel,
+  Input,
+  FormHelperText,
+  FormErrorMessage,
+  Textarea,
+  ModalFooter,
+  useDisclosure,
+  Box,
+  Text
 } from "@chakra-ui/react";
-import React from 'react'
+import React, {useState} from 'react'
 import ReactDOM from 'react-dom/client'
 import { useConnectWallet } from "@web3-onboard/react";
 import { v4 as uuidv4 } from 'uuid';
@@ -18,8 +28,8 @@ import { ethers } from 'ethers'
 
 // @ts-ignore
 import Client from '@pioneer-platform/pioneer-client'
-let spec = 'https://pioneers.dev/spec/swagger.json'
-// let spec = 'http://127.0.0.1:9001/spec/swagger.json'
+// let spec = 'https://pioneers.dev/spec/swagger.json'
+let spec = 'http://127.0.0.1:9001/spec/swagger.json'
 
 import {
   createColumnHelper,
@@ -39,6 +49,9 @@ const ReviewBlockchains = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
   const isError = false
+  const [query, setQuery] = useState('bitcoin...');
+  const [timeOut, setTimeOut] = useState(null);
+  let [value, setValue] = React.useState("");
   //
   const [name, setName] = React.useState('')
   const [type, setApp] = React.useState('')
@@ -312,6 +325,36 @@ const ReviewBlockchains = () => {
     }
   }
 
+  const search = async (query:string) => {
+    // console.log("event: ",event.target.value)
+    console.log("query: ",query)
+    // let searchNew = event.target.value
+    // setSearch(searchNew)
+
+    let config = { queryKey: 'key:public', spec }
+    let Api = new Client(spec, config)
+    let api = await Api.init()
+
+    let KeepKeyPage1 = await api.SearchAssetsByName(query)
+    console.log("KeepKeyPage1: ",KeepKeyPage1.data)
+    setData(KeepKeyPage1.data)
+  };
+
+  const onClear = async () => {
+    setQuery("")
+  };
+
+  const handleKeyPress = (event:any) => {
+    if (timeOut) {
+      clearTimeout(timeOut);
+    }
+    setQuery(event.target.value);
+    // @ts-ignore
+    setTimeOut(setTimeout(() => {
+      search(query);
+    }, 1000));
+  }
+
   return (
     <div>
       <Modal isOpen={isOpen} onClose={onClose}
@@ -485,6 +528,17 @@ const ReviewBlockchains = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      <Box>
+        <Text>Search:</Text>
+        <input
+            onFocus={onClear}
+            value={query}
+            onChange={handleKeyPress}
+            type='search'
+            style={{border: '2px solid black', padding: '15px'}}
+        />
+      </Box>
+      <Button onClick={onStart}>Refresh</Button>
       <div className="p-2">
         <table>
           <thead>

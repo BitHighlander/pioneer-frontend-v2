@@ -1,4 +1,4 @@
-import { Grid, Image, Button } from "@chakra-ui/react";
+import { Grid, Image, Button, Table } from "@chakra-ui/react";
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { useConnectWallet } from "@web3-onboard/react";
@@ -9,7 +9,7 @@ import { ethers } from 'ethers'
 // @ts-ignore
 import Client from '@pioneer-platform/pioneer-client'
 let spec = 'https://pioneers.dev/spec/swagger.json'
-//let spec = 'http://127.0.0.1:9001/spec/swagger.json'
+// let spec = 'http://127.0.0.1:9001/spec/swagger.json'
 
 import {
   createColumnHelper,
@@ -68,108 +68,31 @@ const ReviewBlockchains = () => {
   }])
 
   const columns = [
-    // columnHelper.accessor('image', {
-    //   cell: info => <Image
-    //     src={info.getValue()}
-    //     alt='keepkey api'
-    //     objectFit="cover"
-    //     height="60px"
-    //     width="60px"
-    //     objectPosition="center"
-    //   >
-    //   </Image>,
-    //   footer: info => info.column.id,
-    // }),
-    columnHelper.accessor('fox', {
-      cell: info => info.getValue()+"   ",
+    columnHelper.accessor('image', {
+      cell: info => <Image
+          src={info.getValue()}
+          alt='keepkey api'
+          objectFit="cover"
+          height="60px"
+          width="60px"
+          objectPosition="center"
+      >
+      </Image>,
+      footer: info => info.column.id,
+    }),
+    columnHelper.accessor('github', {
+      cell: info => <a href={'https://github.com/'+info.getValue()}>{info.getValue()}</a> ,
       footer: info => info.column.id,
     }),
     columnHelper.accessor('publicAddress', {
-      cell: info => <a href={info.getValue()}>{info.getValue()}</a> ,
+      cell: info =><div><small>{info.getValue()}</small></div> ,
       footer: info => info.column.id,
     }),
-    // columnHelper.accessor('name', {
-    //   id: 'edit',
-    //   cell: info => <Button onClick={() => editEntry(info.getValue())}>Edit</Button>,
-    //   header: () => <span>edit</span>,
-    //   footer: info => info.column.id,
-    // }),
-    // columnHelper.accessor('name', {
-    //   id: 'approve',
-    //   cell: info => <Button onClick={() => whitelistEntry(info.getValue())}>approve</Button>,
-    //   header: () => <span>approve</span>,
-    //   footer: info => info.column.id,
-    // }),
+    columnHelper.accessor('email', {
+      cell: info => <div>{info.getValue()}</div> ,
+      footer: info => info.column.id,
+    }),
   ]
-
-  let editEntry = async function(name:string){
-    try{
-      //open modal
-      console.log("edit name: ",name)
-    }catch(e){
-      console.error(e)
-    }
-  }
-
-  let whitelistEntry = async function(name:string){
-    try{
-      let queryKey = localStorage.getItem('queryKey')
-      let username= localStorage.getItem('username')
-      if (!queryKey) {
-        console.log("Creating new queryKey~!")
-        queryKey = 'key:' + uuidv4()
-        localStorage.setItem('queryKey', queryKey)
-      }
-      if (!username) {
-        console.log("Creating new username~!")
-        username = 'user:' + uuidv4()
-        username = username.substring(0, 13);
-        console.log("Creating new username~! username: ", username)
-        localStorage.setItem('username', username)
-      }
-
-      let config = {
-        queryKey,
-        username,
-        spec
-      }
-      console.log("config: ",config)
-
-      //get config
-      let client = new Client(spec,config)
-      let pioneer = await client.init()
-
-      //open modal
-      console.log("whitelistEntry name: ",name)
-
-      let entry = data.filter(function (e) { return e.name === name; })[0];
-      console.log("entry: ",entry)
-
-      // let payload:any = {
-      //   name,
-      //   app:entry.app
-      // }
-      // payload = JSON.stringify(payload)
-      //
-      // if(!wallet || !wallet.provider) throw Error("Onbord not setup!")
-      // const ethersProvider = new ethers.providers.Web3Provider(wallet.provider, 'any')
-      // const signer = ethersProvider.getSigner()
-      // let signature = await signer.signMessage(payload)
-      // let address = wallet?.accounts[0]?.address
-      // let whitelist:any = {}
-      // whitelist.signer = address
-      // whitelist.payload = payload
-      // whitelist.signature = signature
-      // if(!address) throw Error("address required!")
-      //
-      // console.log("whitelist: ",whitelist)
-      // let resultWhitelist = await pioneer.ChartBlockchain("",whitelist)
-      // console.log("resultWhitelist: ",resultWhitelist.data)
-      // alert.show(resultWhitelist.data)
-    }catch(e){
-      console.error(e)
-    }
-  }
 
   let onStart = async function(){
     try{
@@ -205,39 +128,6 @@ const ReviewBlockchains = () => {
       let devs = await pioneer.ListDevelopers({limit:1000,skip:0})
       console.log("devs: ",devs.data.length)
       console.log("devs: ",devs.data[0])
-
-      //get fox balances
-      if(!wallet || !wallet.provider) throw Error("Onbord not setup!")
-      const ethersProvider = new ethers.providers.Web3Provider(wallet.provider, 'any')
-
-      for(let i = 0; i < devs.data.length; i++){
-        let dev = devs.data[i]
-        console.log(dev)
-        console.log(dev.publicAddress)
-
-        let minABI = [
-          // balanceOf
-          {
-            "constant":true,
-            "inputs":[{"name":"_owner","type":"address"}],
-            "name":"balanceOf",
-            "outputs":[{"name":"balance","type":"uint256"}],
-            "type":"function"
-          },
-          // decimals
-          {
-            "constant":true,
-            "inputs":[],
-            "name":"decimals",
-            "outputs":[{"name":"","type":"uint8"}],
-            "type":"function"
-          }
-        ];
-        const newContract = new ethers.Contract("0xc770eefad204b5180df6a14ee197d99d808ee52d",minABI,ethersProvider);
-        const decimals = await newContract.decimals();
-        const balanceBN = await newContract.balanceOf(dev.publicAddress)
-        devs.data[i].fox = parseInt(balanceBN/Math.pow(10, decimals))
-      }
       setData(devs.data)
 
 
@@ -261,7 +151,8 @@ const ReviewBlockchains = () => {
   return (
     <div>
       <div className="p-2">
-        <table>
+        <Button onClick={onStart}>Refresh</Button>
+        <Table>
           <thead>
           {table.getHeaderGroups().map(headerGroup => (
             <tr key={headerGroup.id}>
@@ -289,7 +180,7 @@ const ReviewBlockchains = () => {
             </tr>
           ))}
           </tbody>
-        </table>
+        </Table>
         <div className="h-4" />
       </div>
     </div>

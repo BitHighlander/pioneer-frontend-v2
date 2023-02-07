@@ -3,7 +3,7 @@ import React from 'react'
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 
 
-import WhitelistPioneers from "./components/WhitelistPioneers";
+// import WhitelistPioneers from "./components/WhitelistPioneers";
 import SubmitPioneers from "./components/SubmitPioneers";
 import ReviewPioneers from "./components/ReviewPioneers";
 
@@ -17,7 +17,7 @@ const Pioneers = () => {
         <TabList>
           {/*<Tab>Pioneers Pending Review</Tab>*/}
           <Tab>Pioneer Rankings</Tab>
-          {/*<Tab>Register as new Pioneer</Tab>*/}
+          <Tab>Register as new Pioneer</Tab>
         </TabList>
 
         <TabPanels>
@@ -27,9 +27,9 @@ const Pioneers = () => {
           <TabPanel>
             <ReviewPioneers />
           </TabPanel>
-          {/*<TabPanel>*/}
-          {/*  <SubmitPioneers />*/}
-          {/*</TabPanel>*/}
+          <TabPanel>
+            <SubmitPioneers />
+          </TabPanel>
         </TabPanels>
       </Tabs>
     </div>

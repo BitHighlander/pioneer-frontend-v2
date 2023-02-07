@@ -20,13 +20,15 @@ let spec = 'https://pioneers.dev/spec/swagger.json'
 const SubmitAssets = () => {
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
 
-  const [name, setName] = React.useState('')
-  const [app, setApp] = React.useState('')
+  const [usernamePioneer, setUsernamePioneer] = React.useState('')
+  const [email, setEmail] = React.useState('')
   const [image, setImage] = React.useState('')
+  const [github, setGithub] = React.useState('')
 
-  const handleInputChangeName = (e:any) => setName(e.target.value)
-  const handleInputChangeApp = (e:any) => setApp(e.target.value)
+  const handleInputChangeUsername = (e:any) => setUsernamePioneer(e.target.value)
+  const handleInputChangeEmail = (e:any) => setEmail(e.target.value)
   const handleInputChangeImage = (e:any) => setImage(e.target.value)
+  const handleInputChangeGithub = (e:any) => setGithub(e.target.value)
 
 
   // const isError = input === ''
@@ -34,18 +36,15 @@ const SubmitAssets = () => {
 
   let onSubmit = async function(){
     try{
-      console.log("name: ",name)
-      console.log("app: ",app)
+      console.log("username: ",usernamePioneer)
+      console.log("email: ",email)
       console.log("image: ",image)
+      console.log("github: ",github)
 
-      let dapp:any = {}
-      dapp.name = name
-      dapp.app = app
-      dapp.image = image
-      dapp.tags = ['ethereum']
+      let developer:any = {}
 
       let queryKey = localStorage.getItem('queryKey')
-      let username= localStorage.getItem('username')
+      let username = localStorage.getItem('username')
       if (!queryKey) {
         console.log("Creating new queryKey~!")
         queryKey = 'key:' + uuidv4()
@@ -71,8 +70,9 @@ const SubmitAssets = () => {
       let pioneer = await client.init()
 
       let payload:any = {
-        name,
-        app
+        username,
+        github,
+        email,
       }
       payload = JSON.stringify(payload)
 
@@ -82,14 +82,17 @@ const SubmitAssets = () => {
       const ethersProvider = new ethers.providers.Web3Provider(wallet.provider, 'any')
       const signer = ethersProvider.getSigner()
       let signature = await signer.signMessage(payload)
-      dapp.protocol  = ['wallet-connect-v1']
-      dapp.version = "wc-1"
-      dapp.developer = address.toLowerCase()
-      dapp.signer = address.toLowerCase()
-      dapp.payload = payload
-      dapp.signature = signature
-
-      let txInfo = await pioneer.ChartDapp({},dapp)
+      developer.publicAddress = address.toLowerCase()
+      developer.developer = address.toLowerCase()
+      developer.username = username.toLowerCase()
+      developer.github = github.toLowerCase()
+      developer.email = email.toLowerCase()
+      developer.image = image
+      developer.signer = address.toLowerCase()
+      developer.message = payload
+      developer.signature = signature
+      console.log("developer: ",developer)
+      let txInfo = await pioneer.RegisterDeveloper({},developer)
       console.log("SUCCESS: ",txInfo.data)
 
     }catch(e){
@@ -100,36 +103,47 @@ const SubmitAssets = () => {
   return (
     <div>
       <FormControl isInvalid={isError}>
-        <FormLabel>Name</FormLabel>
-        <Input type='email' value={name} onChange={handleInputChangeName} />
+        <FormLabel>Pioneer Username</FormLabel>
+        <Input type='email' value={usernamePioneer} onChange={handleInputChangeUsername} />
         {!isError ? (
           <FormHelperText>
-            Enter the name of the app.
+            Enter your pioneer username
           </FormHelperText>
         ) : (
-          <FormErrorMessage>name is required.</FormErrorMessage>
+          <FormErrorMessage>pioneer username is required.</FormErrorMessage>
         )}
       </FormControl>
       <FormControl isInvalid={isError}>
-        <FormLabel>App URL</FormLabel>
-        <Input type='email' value={app} onChange={handleInputChangeApp} />
+        <FormLabel>email</FormLabel>
+        <Input type='email' value={email} onChange={handleInputChangeEmail} />
         {!isError ? (
-          <FormHelperText>
-            Enter the URL of the dapp
-          </FormHelperText>
+            <FormHelperText>
+              Enter your email address
+            </FormHelperText>
         ) : (
-          <FormErrorMessage>URL is required.</FormErrorMessage>
+            <FormErrorMessage>email address is required.</FormErrorMessage>
         )}
       </FormControl>
       <FormControl isInvalid={isError}>
-        <FormLabel>Image URL</FormLabel>
+        <FormLabel>Github username</FormLabel>
+        <Input type='email' value={github} onChange={handleInputChangeGithub} />
+        {!isError ? (
+          <FormHelperText>
+            Enter your github username
+          </FormHelperText>
+        ) : (
+          <FormErrorMessage>github username is required.</FormErrorMessage>
+        )}
+      </FormControl>
+      <FormControl isInvalid={isError}>
+        <FormLabel>Profile Image URL</FormLabel>
         <Input type='email' value={image} onChange={handleInputChangeImage} />
         {!isError ? (
           <FormHelperText>
-            Enter the URL of image for the Dapp
+            Enter the URL of image for for your profile (must be a URL and not a encoded data:image... object)
           </FormHelperText>
         ) : (
-          <FormErrorMessage>image URL is required.</FormErrorMessage>
+          <FormErrorMessage>profile URL is required.</FormErrorMessage>
         )}
       </FormControl>
       <Button
