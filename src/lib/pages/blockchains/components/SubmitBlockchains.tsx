@@ -89,8 +89,8 @@ const SubmitBlockchains = () => {
       dapp.payload = payload
       dapp.signature = signature
 
-      let txInfo = await pioneer.ChartDapp({},dapp)
-      console.log("SUCCESS: ",txInfo.data)
+      // let txInfo = await pioneer.ChartDapp({},dapp)
+      // console.log("SUCCESS: ",txInfo.data)
 
     }catch(e){
       console.error(e)
@@ -104,18 +104,18 @@ const SubmitBlockchains = () => {
         <Input type='email' value={name} onChange={handleInputChangeName} />
         {!isError ? (
           <FormHelperText>
-            Enter the name of the app.
+            Enter the name of the blockchain.
           </FormHelperText>
         ) : (
-          <FormErrorMessage>name is required.</FormErrorMessage>
+          <FormErrorMessage>blockchain is required.</FormErrorMessage>
         )}
       </FormControl>
       <FormControl isInvalid={isError}>
-        <FormLabel>App URL</FormLabel>
+        <FormLabel>Explorer URL</FormLabel>
         <Input type='email' value={app} onChange={handleInputChangeApp} />
         {!isError ? (
           <FormHelperText>
-            Enter the URL of the dapp
+            Enter the URL of the explorer
           </FormHelperText>
         ) : (
           <FormErrorMessage>URL is required.</FormErrorMessage>
@@ -126,7 +126,7 @@ const SubmitBlockchains = () => {
         <Input type='email' value={image} onChange={handleInputChangeImage} />
         {!isError ? (
           <FormHelperText>
-            Enter the URL of image for the Dapp
+            Enter the URL of image for the blockchain
           </FormHelperText>
         ) : (
           <FormErrorMessage>image URL is required.</FormErrorMessage>
